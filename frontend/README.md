@@ -1,41 +1,73 @@
-# StoryTailor.ai
+# React + TypeScript + Vite
 
-StoryTailor.ai는 아동 친화적이고 안전한 스토리텔링 경험을 제공하는 생성형 AI 기반 플랫폼입니다. OpenAI 기반 모델을 활용하여 개인 맞춤형 이야기 생성, 내러티브 구조 탐색, 접근성 강화, 안전 가드레일 적용 등 다양한 연구와 개발을 진행하였습니다.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## 주요 특징
-- **아동 안전**: 부적절한 콘텐츠 차단 및 안전 가이드라인 적용
-- **개인화**: 사용자의 선호와 특성에 맞춘 맞춤형 이야기 생성
-- **내러티브 구조**: 다양한 이야기 구조와 플롯 실험
-- **접근성**: 다양한 연령과 배경의 아동이 쉽게 접근할 수 있도록 설계
+Currently, two official plugins are available:
 
-## 기술 스택
-- React (Vite 기반)
-- TypeScript
-- Tailwind CSS
-- OpenAI API
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## 설치 및 실행
+## React Compiler
 
-```bash
-npm install
-npm run dev
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-## 폴더 구조
-```
-frontend/
-  ├── public/
-  ├── src/
-  │   ├── App.tsx
-  │   ├── main.tsx
-  │   └── ...
-  ├── package.json
-  └── ...
-```
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-## 기여 방법
-1. 이슈를 등록하거나, 포크 후 PR을 생성해 주세요.
-2. 커밋 메시지는 명확하게 작성해 주세요.
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-## 라이선스
-MIT License
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
