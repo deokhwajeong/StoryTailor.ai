@@ -95,9 +95,10 @@ class SimpleEmbeddingFunction:
         ]
         
         # 해시 기반 추가 특성 (남은 차원 채우기)
-        hash_hex = hashlib.md5(text.encode()).hexdigest()
+        # SHA256을 사용하여 충돌 저항성 확보 (보안 목적이 아닌 특성 생성용)
+        hash_hex = hashlib.sha256(text.encode()).hexdigest()
         hash_features = []
-        for i in range(0, len(hash_hex) - 1, 2):
+        for i in range(0, min(len(hash_hex) - 1, 32), 2):
             val = int(hash_hex[i:i+2], 16) / 255.0
             hash_features.append(val)
         
