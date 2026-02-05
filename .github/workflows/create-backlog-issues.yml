@@ -1,0 +1,400 @@
+name: Create Backlog Issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "create" to confirm issue creation'
+        required: true
+        default: ''
+
+jobs:
+  create-issues:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'create'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create High Priority Issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # B-001: 음성 읽기 기능 (TTS)
+          gh issue create \
+            --title "[BACKLOG] B-001: 음성 읽기 기능 (TTS)" \
+            --body "## 📋 기능 설명
+          Text-to-Speech를 활용한 이야기 음성 출력 기능
+
+          ## 🎯 목표
+          - 생성된 이야기를 음성으로 읽어주는 기능 구현
+          - 다양한 음성 옵션 제공 (남성/여성, 속도 조절)
+          - 감정 표현이 담긴 음성 생성
+
+          ## 📊 우선순위
+          - [x] 🔴 높음 (High)
+
+          ## 📅 예상 작업량
+          2주
+
+          ## ✅ 완료 조건 (Acceptance Criteria)
+          - [ ] TTS API 통합 완료
+          - [ ] 음성 옵션 설정 기능 구현
+          - [ ] 프론트엔드 재생 UI 구현
+          - [ ] 테스트 완료
+
+          ## 📝 관련 문서
+          - [BACKLOG.md](https://github.com/${{ github.repository }}/blob/main/BACKLOG.md)
+          - [ROADMAP.md](https://github.com/${{ github.repository }}/blob/main/ROADMAP.md) - Phase 2" \
+            --label "backlog,enhancement,priority:high" || true
+
+          # B-002: 음성 인식 기능 (STT)
+          gh issue create \
+            --title "[BACKLOG] B-002: 음성 인식 기능 (STT)" \
+            --body "## 📋 기능 설명
+          Speech-to-Text를 활용한 아이 음성 읽기 인식 기능
+
+          ## 🎯 목표
+          - 아이가 이야기를 읽을 때 음성을 인식하는 기능 구현
+          - 아이 음성 인식 최적화
+          - 발음 정확도 피드백 제공
+
+          ## 📊 우선순위
+          - [x] 🔴 높음 (High)
+
+          ## 📅 예상 작업량
+          2주
+
+          ## ✅ 완료 조건 (Acceptance Criteria)
+          - [ ] STT API 통합 완료
+          - [ ] 아이 음성 인식 정확도 80% 이상
+          - [ ] 발음 피드백 UI 구현
+          - [ ] 테스트 완료
+
+          ## 📝 관련 문서
+          - [BACKLOG.md](https://github.com/${{ github.repository }}/blob/main/BACKLOG.md)
+          - [ROADMAP.md](https://github.com/${{ github.repository }}/blob/main/ROADMAP.md) - Phase 2" \
+            --label "backlog,enhancement,priority:high" || true
+
+          # B-003: 읽기 수준 진단 시스템
+          gh issue create \
+            --title "[BACKLOG] B-003: 읽기 수준 진단 시스템" \
+            --body "## 📋 기능 설명
+          Lexile 기반 읽기 능력 자동 평가 시스템
+
+          ## 🎯 목표
+          - Lexile 기반 평가 알고리즘 개발
+          - 읽기 유창성 측정
+          - 어휘력 평가
+
+          ## 📊 우선순위
+          - [x] 🔴 높음 (High)
+
+          ## 📅 예상 작업량
+          3주
+
+          ## ✅ 완료 조건 (Acceptance Criteria)
+          - [ ] Lexile 기반 평가 알고리즘 구현
+          - [ ] 읽기 유창성 측정 기능 구현
+          - [ ] 어휘력 평가 기능 구현
+          - [ ] 진단 결과 리포트 UI 구현
+          - [ ] 테스트 완료
+
+          ## 📝 관련 문서
+          - [BACKLOG.md](https://github.com/${{ github.repository }}/blob/main/BACKLOG.md)
+          - [ROADMAP.md](https://github.com/${{ github.repository }}/blob/main/ROADMAP.md) - Phase 2" \
+            --label "backlog,enhancement,priority:high" || true
+
+          # B-004: AI 도서 추천 엔진
+          gh issue create \
+            --title "[BACKLOG] B-004: AI 도서 추천 엔진" \
+            --body "## 📋 기능 설명
+          진단 결과와 선호도 기반 AI 도서 추천 기능
+
+          ## 🎯 목표
+          - 읽기 수준 기반 도서 추천
+          - 선호도 기반 도서 추천
+          - 학습 목표 기반 도서 추천
+
+          ## 📊 우선순위
+          - [x] 🔴 높음 (High)
+
+          ## 📅 예상 작업량
+          2주
+
+          ## ✅ 완료 조건 (Acceptance Criteria)
+          - [ ] 추천 알고리즘 개발
+          - [ ] 도서 데이터베이스 구축
+          - [ ] 추천 결과 UI 구현
+          - [ ] 테스트 완료
+
+          ## 📝 관련 문서
+          - [BACKLOG.md](https://github.com/${{ github.repository }}/blob/main/BACKLOG.md)
+          - [ROADMAP.md](https://github.com/${{ github.repository }}/blob/main/ROADMAP.md) - Phase 3" \
+            --label "backlog,enhancement,priority:high" || true
+
+      - name: Create Medium Priority Issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # B-005: 분석 리포트 대시보드
+          gh issue create \
+            --title "[BACKLOG] B-005: 분석 리포트 대시보드" \
+            --body "## 📋 기능 설명
+          읽기 습관, 진도, 추천 등 상세 리포트 대시보드
+
+          ## 🎯 목표
+          - 읽기 습관 분석
+          - 진도 추적
+          - 성장 리포트
+
+          ## 📊 우선순위
+          - [x] 🟡 중간 (Medium)
+
+          ## 📅 예상 작업량
+          3주
+
+          ## ✅ 완료 조건 (Acceptance Criteria)
+          - [ ] 대시보드 UI 디자인
+          - [ ] 분석 데이터 API 개발
+          - [ ] 차트/그래프 시각화 구현
+          - [ ] 테스트 완료
+
+          ## 📝 관련 문서
+          - [BACKLOG.md](https://github.com/${{ github.repository }}/blob/main/BACKLOG.md)
+          - [ROADMAP.md](https://github.com/${{ github.repository }}/blob/main/ROADMAP.md) - Phase 3" \
+            --label "backlog,enhancement,priority:medium" || true
+
+          # B-006: 프론트엔드 UI 완성
+          gh issue create \
+            --title "[BACKLOG] B-006: 프론트엔드 UI 완성" \
+            --body "## 📋 기능 설명
+          React 기반 사용자 인터페이스 완성
+
+          ## 🎯 목표
+          - 반응형 디자인 구현
+          - 아동 친화적 UI/UX 디자인
+          - 접근성 지원 (WCAG 2.1)
+
+          ## 📊 우선순위
+          - [x] 🟡 중간 (Medium)
+
+          ## 📅 예상 작업량
+          4주
+
+          ## 🚧 현재 상태
+          In Progress
+
+          ## ✅ 완료 조건 (Acceptance Criteria)
+          - [ ] 모든 주요 페이지 UI 완성
+          - [ ] 반응형 디자인 적용
+          - [ ] 접근성 테스트 통과
+          - [ ] 사용자 테스트 완료
+
+          ## 📝 관련 문서
+          - [BACKLOG.md](https://github.com/${{ github.repository }}/blob/main/BACKLOG.md)
+          - [ROADMAP.md](https://github.com/${{ github.repository }}/blob/main/ROADMAP.md) - Phase 4" \
+            --label "backlog,enhancement,priority:medium" || true
+
+          # B-007: 사용자 인증 시스템
+          gh issue create \
+            --title "[BACKLOG] B-007: 사용자 인증 시스템" \
+            --body "## 📋 기능 설명
+          부모/아이 계정 분리 및 인증 시스템
+
+          ## 🎯 목표
+          - 부모/아이 계정 분리
+          - 소셜 로그인 지원
+          - 안전한 인증 흐름
+
+          ## 📊 우선순위
+          - [x] 🟡 중간 (Medium)
+
+          ## 📅 예상 작업량
+          2주
+
+          ## ✅ 완료 조건 (Acceptance Criteria)
+          - [ ] 회원가입/로그인 기능 구현
+          - [ ] 부모/아이 계정 분리 구현
+          - [ ] 소셜 로그인 통합
+          - [ ] 보안 테스트 완료
+
+          ## 📝 관련 문서
+          - [BACKLOG.md](https://github.com/${{ github.repository }}/blob/main/BACKLOG.md)
+          - [ROADMAP.md](https://github.com/${{ github.repository }}/blob/main/ROADMAP.md) - Phase 4" \
+            --label "backlog,enhancement,priority:medium" || true
+
+          # B-008: 이야기 저장 및 관리
+          gh issue create \
+            --title "[BACKLOG] B-008: 이야기 저장 및 관리" \
+            --body "## 📋 기능 설명
+          생성된 이야기 저장, 즐겨찾기, 공유 기능
+
+          ## 🎯 목표
+          - 이야기 저장 기능
+          - 즐겨찾기 기능
+          - 공유 기능
+
+          ## 📊 우선순위
+          - [x] 🟡 중간 (Medium)
+
+          ## 📅 예상 작업량
+          1주
+
+          ## ✅ 완료 조건 (Acceptance Criteria)
+          - [ ] 이야기 저장 기능 구현
+          - [ ] 즐겨찾기 기능 구현
+          - [ ] 공유 링크 생성 기능 구현
+          - [ ] 테스트 완료
+
+          ## 📝 관련 문서
+          - [BACKLOG.md](https://github.com/${{ github.repository }}/blob/main/BACKLOG.md)" \
+            --label "backlog,enhancement,priority:medium" || true
+
+      - name: Create Low Priority Issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # B-009: 다국어 지원
+          gh issue create \
+            --title "[BACKLOG] B-009: 다국어 지원" \
+            --body "## 📋 기능 설명
+          한국어, 영어 외 다른 언어 지원
+
+          ## 🎯 목표
+          - i18n 프레임워크 적용
+          - 다국어 번역 시스템 구축
+          - 언어 선택 UI 구현
+
+          ## 📊 우선순위
+          - [x] 🟢 낮음 (Low)
+
+          ## 📅 예상 작업량
+          2주
+
+          ## ✅ 완료 조건 (Acceptance Criteria)
+          - [ ] i18n 프레임워크 적용
+          - [ ] 최소 3개 언어 지원
+          - [ ] 언어 선택 UI 구현
+          - [ ] 테스트 완료
+
+          ## 📝 관련 문서
+          - [BACKLOG.md](https://github.com/${{ github.repository }}/blob/main/BACKLOG.md)
+          - [ROADMAP.md](https://github.com/${{ github.repository }}/blob/main/ROADMAP.md) - Future" \
+            --label "backlog,enhancement,priority:low" || true
+
+          # B-010: 부모 모니터링 기능
+          gh issue create \
+            --title "[BACKLOG] B-010: 부모 모니터링 기능" \
+            --body "## 📋 기능 설명
+          부모가 아이 활동 모니터링 가능
+
+          ## 🎯 목표
+          - 활동 요약 알림
+          - 주간/월간 리포트
+          - 읽기 습관 추적
+
+          ## 📊 우선순위
+          - [x] 🟢 낮음 (Low)
+
+          ## 📅 예상 작업량
+          2주
+
+          ## ✅ 완료 조건 (Acceptance Criteria)
+          - [ ] 활동 요약 대시보드 구현
+          - [ ] 알림 시스템 구현
+          - [ ] 리포트 생성 기능 구현
+          - [ ] 테스트 완료
+
+          ## 📝 관련 문서
+          - [BACKLOG.md](https://github.com/${{ github.repository }}/blob/main/BACKLOG.md)
+          - [ROADMAP.md](https://github.com/${{ github.repository }}/blob/main/ROADMAP.md) - Phase 3" \
+            --label "backlog,enhancement,priority:low" || true
+
+          # B-011: 오프라인 모드
+          gh issue create \
+            --title "[BACKLOG] B-011: 오프라인 모드" \
+            --body "## 📋 기능 설명
+          인터넷 없이 기본 기능 사용 가능
+
+          ## 🎯 목표
+          - 오프라인 캐싱 시스템
+          - 저장된 이야기 오프라인 접근
+          - 동기화 기능
+
+          ## 📊 우선순위
+          - [x] 🟢 낮음 (Low)
+
+          ## 📅 예상 작업량
+          3주
+
+          ## ✅ 완료 조건 (Acceptance Criteria)
+          - [ ] Service Worker 구현
+          - [ ] 오프라인 캐싱 기능 구현
+          - [ ] 온라인 복귀 시 동기화 기능 구현
+          - [ ] 테스트 완료
+
+          ## 📝 관련 문서
+          - [BACKLOG.md](https://github.com/${{ github.repository }}/blob/main/BACKLOG.md)
+          - [ROADMAP.md](https://github.com/${{ github.repository }}/blob/main/ROADMAP.md) - Future" \
+            --label "backlog,enhancement,priority:low" || true
+
+          # B-012: 게이미피케이션
+          gh issue create \
+            --title "[BACKLOG] B-012: 게이미피케이션" \
+            --body "## 📋 기능 설명
+          읽기 목표 달성 시 배지, 보상 시스템
+
+          ## 🎯 목표
+          - 읽기 목표 설정 기능
+          - 배지 시스템
+          - 보상 시스템
+
+          ## 📊 우선순위
+          - [x] 🟢 낮음 (Low)
+
+          ## 📅 예상 작업량
+          2주
+
+          ## ✅ 완료 조건 (Acceptance Criteria)
+          - [ ] 목표 설정 UI 구현
+          - [ ] 배지 시스템 구현
+          - [ ] 보상 시스템 구현
+          - [ ] 테스트 완료
+
+          ## 📝 관련 문서
+          - [BACKLOG.md](https://github.com/${{ github.repository }}/blob/main/BACKLOG.md)
+          - [ROADMAP.md](https://github.com/${{ github.repository }}/blob/main/ROADMAP.md) - Phase 4" \
+            --label "backlog,enhancement,priority:low" || true
+
+      - name: Create Labels (if not exist)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Create priority labels
+          gh label create "priority:high" --color "d73a4a" --description "높은 우선순위" || true
+          gh label create "priority:medium" --color "fbca04" --description "중간 우선순위" || true
+          gh label create "priority:low" --color "0e8a16" --description "낮은 우선순위" || true
+          gh label create "backlog" --color "5319e7" --description "백로그 항목" || true
+
+      - name: Summary
+        run: |
+          echo "✅ 백로그 Issues 생성이 완료되었습니다!"
+          echo ""
+          echo "📋 생성된 Issues:"
+          echo "- B-001: 음성 읽기 기능 (TTS)"
+          echo "- B-002: 음성 인식 기능 (STT)"
+          echo "- B-003: 읽기 수준 진단 시스템"
+          echo "- B-004: AI 도서 추천 엔진"
+          echo "- B-005: 분석 리포트 대시보드"
+          echo "- B-006: 프론트엔드 UI 완성"
+          echo "- B-007: 사용자 인증 시스템"
+          echo "- B-008: 이야기 저장 및 관리"
+          echo "- B-009: 다국어 지원"
+          echo "- B-010: 부모 모니터링 기능"
+          echo "- B-011: 오프라인 모드"
+          echo "- B-012: 게이미피케이션"
+          echo ""
+          echo "🔗 Issues 페이지: https://github.com/${{ github.repository }}/issues"
+          echo "📊 Projects 보드: https://github.com/users/${{ github.repository_owner }}/projects/7/views/2"
