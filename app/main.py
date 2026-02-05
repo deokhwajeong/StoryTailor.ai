@@ -3,6 +3,7 @@ StoryTailor.ai FastAPI Main Entry Point
 Child-safe story generation API with RAG-based hallucination prevention
 """
 
+import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -13,11 +14,16 @@ from .schemas import (
     ReadingDiagnosticResponse,
     BookRecommendationRequest,
     BookRecommendationResponse,
-    BookRecommendation
+    BookRecommendation,
+    KnowledgeAddRequest,
+    RAGStatsResponse
 )
 from .story_engine import get_story_engine
 from .rag import get_rag_system
 from .safety import ContentFilter
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="StoryTailor.ai API",
@@ -100,6 +106,7 @@ async def diagnose_reading_level(request: ReadingDiagnosticRequest):
     Reading Level Diagnostics API
     
     Analyzes a child's reading sample to measure Lexile level.
+    Uses RAG to provide personalized improvement recommendations.
     """
     # Simple heuristic-based diagnosis (actual implementation uses ML models)
     sample = request.reading_sample
@@ -115,6 +122,18 @@ async def diagnose_reading_level(request: ReadingDiagnosticRequest):
     estimated_lexile = int(100 + avg_words_per_sentence * 20)
     estimated_lexile = max(100, min(1500, estimated_lexile))
     
+    # RAG-based recommendations
+    rag_recommendations = []
+    if request.use_rag:
+        try:
+            rag = get_rag_system()
+            # Search for learning-related knowledge
+            results = rag.retrieve("reading education learning children", n_results=2)
+            for result in results:
+                rag_recommendations.append(result.get("content", "")[:200])
+        except Exception as e:
+            logger.warning("RAG retrieval failed for reading diagnostics: %s", str(e))
+    
     return ReadingDiagnosticResponse(
         user_id=request.user_id,
         lexile_level=estimated_lexile,
@@ -122,8 +141,10 @@ async def diagnose_reading_level(request: ReadingDiagnosticRequest):
             "word_count": word_count,
             "sentence_count": sentence_count,
             "avg_words_per_sentence": round(avg_words_per_sentence, 1),
-            "method": "heuristic"
-        }
+            "method": "heuristic",
+            "rag_enabled": request.use_rag
+        },
+        rag_recommendations=rag_recommendations
     )
 
 
@@ -133,6 +154,7 @@ async def recommend_books(request: BookRecommendationRequest):
     Book Recommendation API
     
     Recommends books based on reading level and preferences.
+    Uses RAG to enhance recommendations with knowledge base.
     """
     # Sample recommendations (actual implementation integrates with DB or external API)
     sample_books = [
@@ -165,7 +187,21 @@ async def recommend_books(request: BookRecommendationRequest):
     if not filtered_books:
         filtered_books = sample_books[:2]
     
-    return BookRecommendationResponse(recommendations=filtered_books)
+    # RAG-based source tracking
+    rag_sources = []
+    if request.use_rag and request.preferences:
+        try:
+            rag = get_rag_system()
+            query = " ".join(request.preferences)
+            results = rag.retrieve(query, n_results=2)
+            rag_sources = [r.get("source", "Unknown") for r in results]
+        except Exception as e:
+            logger.warning("RAG retrieval failed for book recommendations: %s", str(e))
+    
+    return BookRecommendationResponse(
+        recommendations=filtered_books,
+        rag_sources=rag_sources
+    )
 
 
 @app.get("/report/{user_id}")
@@ -174,7 +210,22 @@ async def get_user_report(user_id: str):
     User Report API
     
     Returns the user's reading activity and progress report.
+    Includes RAG system statistics and usage.
     """
+    # Get RAG statistics
+    rag_stats = {}
+    try:
+        rag = get_rag_system()
+        rag_stats = {
+            "total_knowledge_documents": rag.collection.count(),
+            "rag_enabled": True
+        }
+    except Exception:
+        rag_stats = {
+            "total_knowledge_documents": 0,
+            "rag_enabled": False
+        }
+    
     # Sample report (actual implementation integrates with DB)
     return {
         "user_id": user_id,
@@ -185,18 +236,19 @@ async def get_user_report(user_id: str):
             "level_progress": "+30 from last month",
             "favorite_topics": ["animals", "adventure", "friendship"],
             "achievements": ["First story completed", "10 books achieved", "7 consecutive days of reading"]
-        }
+        },
+        "rag_stats": rag_stats
     }
 
 
 @app.post("/rag/add_knowledge")
-async def add_knowledge(documents: list[str], sources: list[str]):
+async def add_knowledge(request: KnowledgeAddRequest):
     """
     Add documents to RAG knowledge base
     
     Adds new knowledge to be referenced during story generation.
     """
-    if len(documents) != len(sources):
+    if len(request.documents) != len(request.sources):
         raise HTTPException(
             status_code=400, 
             detail="Length of documents and sources must match."
@@ -204,9 +256,9 @@ async def add_knowledge(documents: list[str], sources: list[str]):
     
     try:
         rag = get_rag_system()
-        rag.add_documents(documents, sources)
+        rag.add_documents(request.documents, request.sources)
         return {
-            "message": f"{len(documents)} documents have been added to the knowledge base.",
+            "message": f"{len(request.documents)} documents have been added to the knowledge base.",
             "total_documents": rag.collection.count()
         }
     except Exception as e:
@@ -263,6 +315,32 @@ async def check_content_safety(text: str, age: int = 7):
         "issue": issue,
         "age_appropriateness": age_check
     }
+
+
+@app.get("/rag/stats", response_model=RAGStatsResponse)
+async def get_rag_stats():
+    """
+    RAG System Statistics API
+    
+    Returns statistics about the RAG knowledge base.
+    """
+    try:
+        rag = get_rag_system()
+        total_docs = rag.collection.count()
+        
+        # Get unique categories from default knowledge
+        categories = list(set(
+            doc.get("metadata", {}).get("category", "general")
+            for doc in rag.default_knowledge
+        ))
+        
+        return RAGStatsResponse(
+            total_documents=total_docs,
+            categories=categories,
+            recent_queries=0  # Would track in production
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":

@@ -42,6 +42,22 @@ class TestAPIEndpoints:
         assert "lexile_level" in data
         assert isinstance(data["lexile_level"], int)
     
+    def test_reading_level_diagnosis_with_rag(self, client):
+        """Reading level diagnosis with RAG test"""
+        response = client.post(
+            "/diagnose_reading_level",
+            json={
+                "user_id": "test_user",
+                "reading_sample": "The rabbit jumped. The flower bloomed.",
+                "use_rag": True
+            }
+        )
+        
+        assert response.status_code == 200
+        data = response.json()
+        assert "rag_recommendations" in data
+        assert data["assessment_details"]["rag_enabled"] is True
+    
     def test_book_recommendation(self, client):
         """Book recommendation test"""
         response = client.post(
@@ -58,6 +74,22 @@ class TestAPIEndpoints:
         assert "recommendations" in data
         assert len(data["recommendations"]) > 0
     
+    def test_book_recommendation_with_rag(self, client):
+        """Book recommendation with RAG test"""
+        response = client.post(
+            "/recommend_books",
+            json={
+                "user_id": "test_user",
+                "reading_level": 400,
+                "preferences": ["brave", "rabbit"],
+                "use_rag": True
+            }
+        )
+        
+        assert response.status_code == 200
+        data = response.json()
+        assert "rag_sources" in data
+    
     def test_user_report(self, client):
         """User report test"""
         response = client.get("/report/test_user")
@@ -66,6 +98,7 @@ class TestAPIEndpoints:
         data = response.json()
         assert data["user_id"] == "test_user"
         assert "report" in data
+        assert "rag_stats" in data
     
     def test_content_safety_check(self, client):
         """Content safety check test"""
@@ -118,6 +151,31 @@ class TestRAGEndpoints:
         data = response.json()
         assert "verified" in data
         assert "confidence" in data
+    
+    def test_rag_stats(self, client):
+        """RAG stats endpoint test"""
+        response = client.get("/rag/stats")
+        
+        assert response.status_code == 200
+        data = response.json()
+        assert "total_documents" in data
+        assert "categories" in data
+        assert isinstance(data["total_documents"], int)
+    
+    def test_rag_add_knowledge(self, client):
+        """RAG add knowledge test"""
+        response = client.post(
+            "/rag/add_knowledge",
+            json={
+                "documents": ["Test knowledge about brave animals."],
+                "sources": ["Test Source"]
+            }
+        )
+        
+        assert response.status_code == 200
+        data = response.json()
+        assert "message" in data
+        assert "total_documents" in data
 
 
 class TestStoryGeneration:
