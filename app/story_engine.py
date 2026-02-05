@@ -86,6 +86,9 @@ class StoryEngine:
             n_results=3
         )
         
+        # Extract RAG context for response
+        rag_context = [doc.get("content", "")[:150] for doc in retrieved_docs]
+        
         # Generate story based on context
         result = self.rag_system.generate_with_context(
             query=query,
@@ -105,7 +108,8 @@ class StoryEngine:
             story=story,
             sources=result["sources"],
             fact_checked=result["fact_checked"],
-            confidence_score=result["confidence_score"]
+            confidence_score=result["confidence_score"],
+            rag_context=rag_context
         )
     
     def _generate_basic(
