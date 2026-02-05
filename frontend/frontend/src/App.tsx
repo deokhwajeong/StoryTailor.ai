@@ -89,13 +89,15 @@ function App() {
               <button
                 onClick={() => setShowRagInfo(!showRagInfo)}
                 className="flex items-center gap-2 text-sm text-blue-500 hover:text-blue-700"
+                aria-expanded={showRagInfo}
+                aria-controls="rag-info-panel"
               >
                 <InformationCircleIcon className="w-5 h-5" />
                 {showRagInfo ? 'RAG 정보 숨기기' : 'RAG 정보 보기'}
               </button>
               
               {showRagInfo && (
-                <div className="mt-2 p-3 bg-blue-50 rounded-lg text-sm">
+                <div id="rag-info-panel" className="mt-2 p-3 bg-blue-50 rounded-lg text-sm">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="font-semibold">신뢰도:</span>
                     <span className={`px-2 py-1 rounded ${

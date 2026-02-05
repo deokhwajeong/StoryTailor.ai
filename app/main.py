@@ -3,6 +3,7 @@ StoryTailor.ai FastAPI Main Entry Point
 Child-safe story generation API with RAG-based hallucination prevention
 """
 
+import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -20,6 +21,9 @@ from .schemas import (
 from .story_engine import get_story_engine
 from .rag import get_rag_system
 from .safety import ContentFilter
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="StoryTailor.ai API",
@@ -127,8 +131,8 @@ async def diagnose_reading_level(request: ReadingDiagnosticRequest):
             results = rag.retrieve("reading education learning children", n_results=2)
             for result in results:
                 rag_recommendations.append(result.get("content", "")[:200])
-        except Exception:
-            pass  # Continue without RAG if it fails
+        except Exception as e:
+            logger.warning("RAG retrieval failed for reading diagnostics: %s", str(e))
     
     return ReadingDiagnosticResponse(
         user_id=request.user_id,
@@ -191,8 +195,8 @@ async def recommend_books(request: BookRecommendationRequest):
             query = " ".join(request.preferences)
             results = rag.retrieve(query, n_results=2)
             rag_sources = [r.get("source", "Unknown") for r in results]
-        except Exception:
-            pass  # Continue without RAG if it fails
+        except Exception as e:
+            logger.warning("RAG retrieval failed for book recommendations: %s", str(e))
     
     return BookRecommendationResponse(
         recommendations=filtered_books,
