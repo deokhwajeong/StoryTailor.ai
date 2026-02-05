@@ -157,9 +157,9 @@ pytest tests/test_rag.py -v
 
 ## Project Roadmap
 
-Track project progress and roadmap on [GitHub Projects](https://github.com/deokhwajeong/StoryTailor.ai/projects).
+Track project progress and roadmap on [GitHub Projects](https://github.com/users/deokhwajeong/projects/7/views/2).
 
-📋 **[View Full Backlog](./BACKLOG.md)** | 🗺️ **[View Full Roadmap](./ROADMAP.md)**
+📋 **[View Full Backlog](./BACKLOG.md)** | 🗺️ **[View Full Roadmap](./ROADMAP.md)** | 📊 **[Projects Guide](./PROJECTS_GUIDE.md)**
 
 ### Current Progress
 - [x] Core story generation engine
