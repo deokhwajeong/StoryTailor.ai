@@ -155,6 +155,29 @@ pytest tests/ -v
 pytest tests/test_rag.py -v
 ```
 
+## Project Roadmap
+
+Track project progress and roadmap on [GitHub Projects](https://github.com/deokhwajeong/StoryTailor.ai/projects).
+
+프로젝트 진행 상황과 로드맵은 [GitHub Projects](https://github.com/deokhwajeong/StoryTailor.ai/projects)에서 확인할 수 있습니다.
+
+### Current Progress / 현재 진행 상황
+- [x] Core story generation engine / 기본 스토리 생성 엔진 구현
+- [x] RAG-based hallucination prevention system / RAG 기반 할루시네이션 방지 시스템
+- [x] FastAPI server setup / FastAPI 서버 구축
+- [x] Safety filtering module / 안전 필터링 모듈
+- [ ] Voice reading features (TTS/STT) / 음성 읽기 기능
+- [ ] Reading level diagnostics / 읽기 수준 진단 시스템
+- [ ] AI book recommendation engine / AI 도서 추천 엔진
+- [ ] Analytics report dashboard / 분석 리포트 대시보드
+- [ ] Frontend UI completion / 프론트엔드 UI 완성
+
+### Future Plans / 향후 계획
+1. **Phase 1**: Core feature stabilization and test enhancement / 핵심 기능 안정화 및 테스트 강화
+2. **Phase 2**: Voice features and reading diagnostics / 음성 기능 및 읽기 진단 시스템 개발
+3. **Phase 3**: Personalized recommendation and analytics / 개인화 추천 엔진 및 분석 기능 확장
+4. **Phase 4**: Frontend completion and user feedback / 프론트엔드 완성 및 사용자 피드백 반영
+
 ## Contributing
 PRs and issues are welcome! We encourage participation from those interested in child safety, AI ethics, and reading education.
 
