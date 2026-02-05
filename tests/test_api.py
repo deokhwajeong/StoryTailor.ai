@@ -140,8 +140,8 @@ class TestStoryGeneration:
     
     def test_story_request_valid_structure(self, client):
         """유효한 스토리 요청 구조 테스트"""
-        # 이 테스트는 OpenAI API 키 없이는 실패하지만,
-        # 요청 구조가 올바른지 확인
+        import os
+        
         response = client.post(
             "/generate_story",
             json={
@@ -152,5 +152,10 @@ class TestStoryGeneration:
             }
         )
         
-        # API 키 없으면 503 또는 500, 있으면 200
-        assert response.status_code in [200, 500, 503]
+        # API 키가 설정되어 있으면 200, 없으면 400 (ValueError)
+        has_api_key = bool(os.getenv("OPENAI_API_KEY"))
+        if has_api_key:
+            assert response.status_code == 200
+        else:
+            # API 키 없으면 ValueError -> 400 Bad Request
+            assert response.status_code == 400
