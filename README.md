@@ -6,7 +6,7 @@ StoryTailor.ai is a research-driven project focused on generative AI application
 
 ## Key Features
 - **Generative AI Storytelling**: Create personalized stories based on age, reading level, preferences, and learning goals
-- **🆕 RAG 기반 할루시네이션 방지**: Retrieval Augmented Generation으로 사실에 기반한 스토리 생성
+- **🆕 RAG-based Hallucination Prevention**: Fact-based story generation using Retrieval Augmented Generation
 - **Reading Level Diagnostics**: Automatically assess and track children's reading skills (e.g., Lexile)
 - **AI Book Recommendations**: Suggest books based on diagnostics and preferences
 - **Reading Practice & Voice Reading**: Support reading practice and voice reading (with speech recognition integration)
@@ -15,55 +15,55 @@ StoryTailor.ai is a research-driven project focused on generative AI application
 - **Accessibility & Safety**: Built-in content filtering and age-appropriate safety guidelines
 - **ML-based Personalization**: Continuous personalization based on feedback, interactions, and reading data
 
-## RAG (Retrieval Augmented Generation) - 할루시네이션 방지
+## RAG (Retrieval Augmented Generation) - Hallucination Prevention
 
-### RAG란?
-RAG(Retrieval Augmented Generation)는 LLM의 **할루시네이션(환각)을 방지**하기 위한 기술입니다. LLM이 학습하지 않은 정보를 만들어내는 것을 방지하고, 검증된 정보에 기반한 응답을 생성합니다.
+### What is RAG?
+RAG (Retrieval Augmented Generation) is a technology to **prevent hallucinations** in LLMs. It prevents LLMs from generating information they haven't learned and generates responses based on verified information.
 
-### 작동 원리
+### How It Works
 ```
-1. 사용자 요청 → 2. 지식 베이스 검색 → 3. 관련 문서 추출 → 4. 컨텍스트 + LLM → 5. 사실 기반 응답
-     ↓                    ↓                    ↓                    ↓                ↓
-  "용감한 토끼"      ChromaDB 검색        용기, 토끼 정보      프롬프트 강화      검증된 스토리
+1. User Request → 2. Knowledge Base Search → 3. Relevant Doc Extraction → 4. Context + LLM → 5. Fact-based Response
+       ↓                      ↓                         ↓                        ↓                    ↓
+  "Brave Rabbit"      ChromaDB Search         Courage, Rabbit Info      Prompt Enhancement    Verified Story
 ```
 
-### 주요 기능
-1. **지식 베이스 관리**: ChromaDB를 활용한 벡터 데이터베이스
-2. **의미 기반 검색**: 사용자 요청과 관련된 정보를 의미적으로 검색
-3. **컨텍스트 주입**: 검색된 정보를 LLM 프롬프트에 포함
-4. **팩트 체크**: 생성된 내용이 지식 베이스와 일치하는지 검증
-5. **출처 추적**: 참조된 정보의 출처를 함께 제공
-6. **신뢰도 점수**: 생성된 콘텐츠의 신뢰도를 수치로 제공
+### Key Features
+1. **Knowledge Base Management**: Vector database using ChromaDB
+2. **Semantic Search**: Semantically search for information related to user requests
+3. **Context Injection**: Include retrieved information in LLM prompts
+4. **Fact Checking**: Verify that generated content matches the knowledge base
+5. **Source Tracking**: Provide sources of referenced information
+6. **Confidence Score**: Provide numerical confidence scores for generated content
 
-### 사용 예시
+### Usage Example
 ```python
 from app.rag import get_rag_system
 
-# RAG 시스템 초기화
+# Initialize RAG system
 rag = get_rag_system()
 
-# 지식 추가
+# Add knowledge
 rag.add_documents(
-    documents=["토끼는 시속 70km로 달릴 수 있습니다."],
-    sources=["동물 백과사전"]
+    documents=["Rabbits can run up to 70 km/h."],
+    sources=["Animal Encyclopedia"]
 )
 
-# 관련 정보 검색
-results = rag.retrieve("빠른 토끼", n_results=3)
+# Search for relevant information
+results = rag.retrieve("fast rabbit", n_results=3)
 
-# 팩트 체크
-fact_result = rag.fact_check("토끼는 빠르게 달릴 수 있다")
+# Fact check
+fact_result = rag.fact_check("Rabbits can run fast")
 print(fact_result)  # {"verified": True, "confidence": 0.85, ...}
 ```
 
-### RAG vs 일반 LLM 비교
-| 구분 | 일반 LLM | RAG 적용 |
-|------|---------|----------|
-| 할루시네이션 | 높음 | 낮음 |
-| 사실 정확도 | 중간 | 높음 |
-| 출처 제공 | ❌ | ✅ |
-| 검증 가능성 | ❌ | ✅ |
-| 최신 정보 | ❌ (학습 데이터 한정) | ✅ (지식 베이스 업데이트) |
+### RAG vs Standard LLM Comparison
+| Category | Standard LLM | With RAG |
+|----------|-------------|----------|
+| Hallucination | High | Low |
+| Factual Accuracy | Medium | High |
+| Source Provided | ❌ | ✅ |
+| Verifiability | ❌ | ✅ |
+| Latest Information | ❌ (Limited to training data) | ✅ (Knowledge base updates) |
 
 ## Tech Stack
 - Python 3.10+
@@ -88,8 +88,8 @@ export OPENAI_API_KEY="your-api-key-here"
 uvicorn app.main:app --reload
 ```
 
-### API 문서
-서버 실행 후 http://localhost:8000/docs 에서 Swagger UI로 API 문서를 확인할 수 있습니다.
+### API Documentation
+After starting the server, you can view the API documentation via Swagger UI at http://localhost:8000/docs.
 
 ## Project Structure
 ```
@@ -119,31 +119,31 @@ POST /generate_story
   "reading_level": 420,
   "preferences": ["animals", "adventure"],
   "learning_goal": "value of friendship",
-  "use_rag": true  // RAG 사용으로 할루시네이션 방지
+  "use_rag": true  // Use RAG to prevent hallucinations
 }
 
 Response:
 {
-  "story": "옛날 옛적에 용감한 토끼가...",
-  "sources": ["아동 교육 원칙", "동물 백과사전"],  // 참조 출처
+  "story": "Once upon a time, a brave rabbit...",
+  "sources": ["Child Education Principles", "Animal Encyclopedia"],  // Reference sources
   "fact_checked": true,
-  "confidence_score": 0.87  // 신뢰도 점수
+  "confidence_score": 0.87  // Confidence score
 }
 
 POST /rag/fact_check
 {
-  "statement": "토끼는 시속 70km로 달릴 수 있다"
+  "statement": "Rabbits can run at 70 km/h"
 }
 
 Response:
 {
   "verified": true,
   "confidence": 0.85,
-  "source": "동물 백과사전",
-  "message": "검증됨"
+  "source": "Animal Encyclopedia",
+  "message": "Verified"
 }
 
-GET /rag/search?query=용감한+토끼&n_results=3
+GET /rag/search?query=brave+rabbit&n_results=3
 ```
 
 ## Testing
@@ -159,24 +159,22 @@ pytest tests/test_rag.py -v
 
 Track project progress and roadmap on [GitHub Projects](https://github.com/deokhwajeong/StoryTailor.ai/projects).
 
-프로젝트 진행 상황과 로드맵은 [GitHub Projects](https://github.com/deokhwajeong/StoryTailor.ai/projects)에서 확인할 수 있습니다.
+### Current Progress
+- [x] Core story generation engine
+- [x] RAG-based hallucination prevention system
+- [x] FastAPI server setup
+- [x] Safety filtering module
+- [ ] Voice reading features (TTS/STT)
+- [ ] Reading level diagnostics
+- [ ] AI book recommendation engine
+- [ ] Analytics report dashboard
+- [ ] Frontend UI completion
 
-### Current Progress / 현재 진행 상황
-- [x] Core story generation engine / 기본 스토리 생성 엔진 구현
-- [x] RAG-based hallucination prevention system / RAG 기반 할루시네이션 방지 시스템
-- [x] FastAPI server setup / FastAPI 서버 구축
-- [x] Safety filtering module / 안전 필터링 모듈
-- [ ] Voice reading features (TTS/STT) / 음성 읽기 기능
-- [ ] Reading level diagnostics / 읽기 수준 진단 시스템
-- [ ] AI book recommendation engine / AI 도서 추천 엔진
-- [ ] Analytics report dashboard / 분석 리포트 대시보드
-- [ ] Frontend UI completion / 프론트엔드 UI 완성
-
-### Future Plans / 향후 계획
-1. **Phase 1**: Core feature stabilization and test enhancement / 핵심 기능 안정화 및 테스트 강화
-2. **Phase 2**: Voice features and reading diagnostics / 음성 기능 및 읽기 진단 시스템 개발
-3. **Phase 3**: Personalized recommendation and analytics / 개인화 추천 엔진 및 분석 기능 확장
-4. **Phase 4**: Frontend completion and user feedback / 프론트엔드 완성 및 사용자 피드백 반영
+### Future Plans
+1. **Phase 1**: Core feature stabilization and test enhancement
+2. **Phase 2**: Voice features and reading diagnostics system development
+3. **Phase 3**: Personalized recommendation engine and analytics expansion
+4. **Phase 4**: Frontend completion and user feedback integration
 
 ## Contributing
 PRs and issues are welcome! We encourage participation from those interested in child safety, AI ethics, and reading education.

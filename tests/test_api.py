@@ -1,5 +1,5 @@
 """
-API 통합 테스트
+API Integration Tests
 """
 
 import pytest
@@ -9,15 +9,15 @@ from app.main import app
 
 @pytest.fixture
 def client():
-    """테스트 클라이언트"""
+    """Test client"""
     return TestClient(app)
 
 
 class TestAPIEndpoints:
-    """API 엔드포인트 테스트"""
+    """API Endpoint Tests"""
     
     def test_root_endpoint(self, client):
-        """루트 엔드포인트 테스트"""
+        """Root endpoint test"""
         response = client.get("/")
         
         assert response.status_code == 200
@@ -27,12 +27,12 @@ class TestAPIEndpoints:
         assert "RAG" in str(data["features"])
     
     def test_reading_level_diagnosis(self, client):
-        """읽기 수준 진단 테스트"""
+        """Reading level diagnosis test"""
         response = client.post(
             "/diagnose_reading_level",
             json={
                 "user_id": "test_user",
-                "reading_sample": "토끼가 뛰었습니다. 꽃이 피었습니다."
+                "reading_sample": "The rabbit jumped. The flower bloomed."
             }
         )
         
@@ -43,13 +43,13 @@ class TestAPIEndpoints:
         assert isinstance(data["lexile_level"], int)
     
     def test_book_recommendation(self, client):
-        """도서 추천 테스트"""
+        """Book recommendation test"""
         response = client.post(
             "/recommend_books",
             json={
                 "user_id": "test_user",
                 "reading_level": 400,
-                "preferences": ["동물", "모험"]
+                "preferences": ["animals", "adventure"]
             }
         )
         
@@ -59,7 +59,7 @@ class TestAPIEndpoints:
         assert len(data["recommendations"]) > 0
     
     def test_user_report(self, client):
-        """사용자 리포트 테스트"""
+        """User report test"""
         response = client.get("/report/test_user")
         
         assert response.status_code == 200
@@ -68,10 +68,10 @@ class TestAPIEndpoints:
         assert "report" in data
     
     def test_content_safety_check(self, client):
-        """콘텐츠 안전성 검사 테스트"""
+        """Content safety check test"""
         response = client.post(
             "/safety/check",
-            params={"text": "귀여운 토끼가 숲에서 놀았어요", "age": 7}
+            params={"text": "A cute rabbit played in the forest", "age": 7}
         )
         
         assert response.status_code == 200
@@ -80,10 +80,10 @@ class TestAPIEndpoints:
         assert data["is_safe"] is True
     
     def test_content_safety_check_unsafe(self, client):
-        """안전하지 않은 콘텐츠 검사 테스트"""
+        """Unsafe content check test"""
         response = client.post(
             "/safety/check",
-            params={"text": "무서운 괴물이 나타났다", "age": 5}
+            params={"text": "A scary monster appeared", "age": 5}
         )
         
         assert response.status_code == 200
@@ -92,13 +92,13 @@ class TestAPIEndpoints:
 
 
 class TestRAGEndpoints:
-    """RAG 관련 API 테스트"""
+    """RAG-related API Tests"""
     
     def test_rag_search(self, client):
-        """RAG 검색 테스트"""
+        """RAG search test"""
         response = client.get(
             "/rag/search",
-            params={"query": "용감한 토끼", "n_results": 2}
+            params={"query": "brave rabbit", "n_results": 2}
         )
         
         assert response.status_code == 200
@@ -108,10 +108,10 @@ class TestRAGEndpoints:
         assert "count" in data
     
     def test_rag_fact_check(self, client):
-        """RAG 팩트 체크 테스트"""
+        """RAG fact check test"""
         response = client.post(
             "/rag/fact_check",
-            params={"statement": "용감함은 두려움을 이기는 것이다"}
+            params={"statement": "Bravery is about overcoming fear"}
         )
         
         assert response.status_code == 200
@@ -121,41 +121,41 @@ class TestRAGEndpoints:
 
 
 class TestStoryGeneration:
-    """스토리 생성 테스트 (OpenAI API 없이)"""
+    """Story generation tests (without OpenAI API)"""
     
     def test_story_request_validation(self, client):
-        """스토리 요청 검증 테스트"""
-        # 잘못된 나이 값
+        """Story request validation test"""
+        # Invalid age value
         response = client.post(
             "/generate_story",
             json={
-                "age": 2,  # 최소 3세
-                "preferences": ["토끼"],
+                "age": 2,  # Minimum 3 years old
+                "preferences": ["rabbit"],
                 "use_rag": True
             }
         )
         
-        # Pydantic 검증 실패
+        # Pydantic validation failure
         assert response.status_code == 422
     
     def test_story_request_valid_structure(self, client):
-        """유효한 스토리 요청 구조 테스트"""
+        """Valid story request structure test"""
         import os
         
         response = client.post(
             "/generate_story",
             json={
                 "age": 7,
-                "preferences": ["토끼", "모험"],
-                "learning_goal": "우정의 가치",
+                "preferences": ["rabbit", "adventure"],
+                "learning_goal": "value of friendship",
                 "use_rag": True
             }
         )
         
-        # API 키가 설정되어 있으면 200, 없으면 400 (ValueError)
+        # If API key is set: 200, if not: 400 (ValueError)
         has_api_key = bool(os.getenv("OPENAI_API_KEY"))
         if has_api_key:
             assert response.status_code == 200
         else:
-            # API 키 없으면 ValueError -> 400 Bad Request
+            # No API key -> ValueError -> 400 Bad Request
             assert response.status_code == 400

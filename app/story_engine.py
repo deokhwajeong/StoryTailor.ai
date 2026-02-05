@@ -1,6 +1,6 @@
 """
 Story Generation Engine
-스토리 생성 엔진 - RAG 통합
+Story generation engine - RAG integration
 """
 
 import os
@@ -18,60 +18,60 @@ except ImportError:
 
 
 class StoryEngine:
-    """스토리 생성 엔진"""
+    """Story generation engine"""
     
     def __init__(self, rag_system: Optional[RAGSystem] = None):
         """
-        스토리 엔진 초기화
+        Initialize story engine
         
         Args:
-            rag_system: RAG 시스템 인스턴스 (None이면 기본 인스턴스 사용)
+            rag_system: RAG system instance (None uses default instance)
         """
         self.rag_system = rag_system or get_rag_system()
         self._openai_client = None
     
     @property
     def openai_client(self):
-        """OpenAI 클라이언트 (지연 초기화)"""
+        """OpenAI client (lazy initialization)"""
         if self._openai_client is None:
             if not OPENAI_AVAILABLE:
                 raise ImportError(
-                    "openai 패키지가 설치되지 않았습니다."
+                    "openai package is not installed."
                 )
             api_key = os.getenv("OPENAI_API_KEY")
             if not api_key:
-                raise ValueError("OPENAI_API_KEY 환경 변수가 설정되지 않았습니다.")
+                raise ValueError("OPENAI_API_KEY environment variable is not set.")
             self._openai_client = OpenAI(api_key=api_key)
         return self._openai_client
     
     def generate_story(self, request: StoryRequest) -> StoryResponse:
         """
-        스토리 생성
+        Generate story
         
         Args:
-            request: 스토리 생성 요청
+            request: Story generation request
         
         Returns:
-            생성된 스토리 응답
+            Generated story response
         """
-        # 요청 검증
-        query = " ".join(request.preferences) if request.preferences else "재미있는 모험"
+        # Request validation
+        query = " ".join(request.preferences) if request.preferences else "fun adventure"
         
-        # 안전성 사전 검사
+        # Pre-check safety
         is_safe, issue = ContentFilter.is_safe(query)
         if not is_safe:
             return StoryResponse(
-                story=f"죄송합니다. 요청하신 주제는 처리할 수 없습니다. ({issue})",
+                story=f"Sorry, we cannot process the requested topic. ({issue})",
                 sources=[],
                 fact_checked=False,
                 confidence_score=0.0
             )
         
         if request.use_rag:
-            # RAG를 사용한 할루시네이션 방지 스토리 생성
+            # RAG-based hallucination-free story generation
             return self._generate_with_rag(request, query)
         else:
-            # 기본 LLM 스토리 생성 (RAG 없음)
+            # Basic LLM story generation (without RAG)
             return self._generate_basic(request, query)
     
     def _generate_with_rag(
@@ -79,14 +79,14 @@ class StoryEngine:
         request: StoryRequest, 
         query: str
     ) -> StoryResponse:
-        """RAG를 사용한 스토리 생성"""
-        # 관련 문서 검색
+        """Generate story using RAG"""
+        # Search related documents
         retrieved_docs = self.rag_system.retrieve(
             query=query,
             n_results=3
         )
         
-        # 컨텍스트 기반 스토리 생성
+        # Generate story based on context
         result = self.rag_system.generate_with_context(
             query=query,
             retrieved_docs=retrieved_docs,
@@ -95,7 +95,7 @@ class StoryEngine:
             learning_goal=request.learning_goal
         )
         
-        # 생성된 스토리 안전성 검사 및 정화
+        # Check and sanitize generated story safety
         story = result["story"]
         is_safe, _ = ContentFilter.is_safe(story)
         if not is_safe:
@@ -113,15 +113,15 @@ class StoryEngine:
         request: StoryRequest, 
         query: str
     ) -> StoryResponse:
-        """기본 LLM 스토리 생성 (RAG 없음) - 할루시네이션 위험 있음"""
-        system_prompt = f"""당신은 {request.age}세 아이를 위한 동화 작가입니다.
-아이의 나이에 맞는 어휘와 문장 길이를 사용하세요.
-폭력적이거나 무서운 내용은 피하고, 긍정적인 메시지를 담아주세요."""
+        """Basic LLM story generation (without RAG) - risk of hallucination"""
+        system_prompt = f"""You are a children's story writer for {request.age}-year-old children.
+Use vocabulary and sentence length appropriate for the child's age.
+Avoid violent or scary content and include positive messages."""
 
-        user_prompt = f"""주제: {query}
-학습 목표: {request.learning_goal or '재미있고 교훈적인 이야기'}
+        user_prompt = f"""Topic: {query}
+Learning Goal: {request.learning_goal or 'A fun and educational story'}
 
-위 주제로 짧은 동화를 만들어주세요."""
+Please create a short story on the above topic."""
 
         response = self.openai_client.chat.completions.create(
             model="gpt-4o-mini",
@@ -135,7 +135,7 @@ class StoryEngine:
         
         story = response.choices[0].message.content
         
-        # 안전성 검사 및 정화
+        # Check and sanitize safety
         is_safe, _ = ContentFilter.is_safe(story)
         if not is_safe:
             story = ContentFilter.sanitize(story)
@@ -143,17 +143,17 @@ class StoryEngine:
         return StoryResponse(
             story=story,
             sources=[],
-            fact_checked=False,  # RAG 없이는 팩트 체크 안됨
-            confidence_score=0.5  # RAG 없이는 신뢰도 낮음
+            fact_checked=False,  # No fact check without RAG
+            confidence_score=0.5  # Lower confidence without RAG
         )
 
 
-# 전역 엔진 인스턴스
+# Global engine instance
 _engine_instance: Optional[StoryEngine] = None
 
 
 def get_story_engine() -> StoryEngine:
-    """스토리 엔진 싱글톤 인스턴스 반환"""
+    """Return story engine singleton instance"""
     global _engine_instance
     if _engine_instance is None:
         _engine_instance = StoryEngine()

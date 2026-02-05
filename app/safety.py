@@ -1,6 +1,6 @@
 """
 Safety & Content Filtering Module
-아동에게 안전한 콘텐츠 필터링
+Content filtering for child safety
 """
 
 import re
@@ -8,64 +8,64 @@ from typing import Optional
 
 
 class ContentFilter:
-    """아동용 콘텐츠 안전 필터"""
+    """Content safety filter for children"""
     
-    # 부적절한 단어 목록 (예시)
+    # List of inappropriate words (examples)
     INAPPROPRIATE_WORDS = [
-        "죽이다", "살해", "폭력", "피", "무서운", "공포",
-        "술", "담배", "마약", "총", "칼"
+        "kill", "murder", "violence", "blood", "scary", "horror",
+        "alcohol", "cigarette", "drug", "gun", "knife"
     ]
     
-    # 허용되지 않는 주제
+    # Blocked topics
     BLOCKED_TOPICS = [
-        "전쟁", "범죄", "약물", "성인"
+        "war", "crime", "drugs", "adult"
     ]
     
     @classmethod
     def is_safe(cls, text: str) -> tuple[bool, Optional[str]]:
         """
-        텍스트가 아동에게 안전한지 확인
+        Check if text is safe for children
         
         Args:
-            text: 확인할 텍스트
+            text: Text to check
         
         Returns:
-            (안전 여부, 문제점 설명 또는 None)
+            (safety status, issue description or None)
         """
         text_lower = text.lower()
         
-        # 부적절한 단어 검사
+        # Check for inappropriate words
         for word in cls.INAPPROPRIATE_WORDS:
             if word in text_lower:
-                return False, f"부적절한 단어 감지: '{word}'"
+                return False, f"Inappropriate word detected: '{word}'"
         
-        # 차단된 주제 검사
+        # Check for blocked topics
         for topic in cls.BLOCKED_TOPICS:
             if topic in text_lower:
-                return False, f"부적절한 주제 감지: '{topic}'"
+                return False, f"Inappropriate topic detected: '{topic}'"
         
         return True, None
     
     @classmethod
     def sanitize(cls, text: str) -> str:
         """
-        텍스트에서 부적절한 내용 제거/완화
+        Remove/soften inappropriate content from text
         
         Args:
-            text: 정화할 텍스트
+            text: Text to sanitize
         
         Returns:
-            정화된 텍스트
+            Sanitized text
         """
         result = text
         
-        # 부적절한 단어를 순화된 표현으로 대체
+        # Replace inappropriate words with softened expressions
         replacements = {
-            "죽이다": "물리치다",
-            "살해": "퇴치",
-            "폭력": "모험",
-            "무서운": "신비로운",
-            "공포": "긴장감"
+            "kill": "defeat",
+            "murder": "stop",
+            "violence": "adventure",
+            "scary": "mysterious",
+            "horror": "suspense"
         }
         
         for bad_word, good_word in replacements.items():
@@ -80,16 +80,16 @@ class ContentFilter:
         age: int
     ) -> dict:
         """
-        연령에 맞는 콘텐츠인지 확인
+        Check if content is appropriate for the target age
         
         Args:
-            text: 확인할 텍스트
-            age: 대상 연령
+            text: Text to check
+            age: Target age
         
         Returns:
-            적합성 평가 결과
+            Appropriateness evaluation result
         """
-        # 문장 복잡도 분석 (간단한 휴리스틱)
+        # Sentence complexity analysis (simple heuristic)
         sentences = re.split(r'[.!?]', text)
         sentences = [s.strip() for s in sentences if s.strip()]
         
@@ -100,7 +100,7 @@ class ContentFilter:
         
         suggestions = []
         
-        # 연령별 권장 문장 길이
+        # Recommended sentence length by age
         if age <= 5:
             max_recommended_length = 30
         elif age <= 8:
@@ -112,12 +112,12 @@ class ContentFilter:
         
         if avg_sentence_length > max_recommended_length:
             suggestions.append(
-                f"문장이 {age}세 아이에게 다소 길 수 있습니다. "
-                f"평균 문장 길이: {avg_sentence_length:.0f}자, "
-                f"권장: {max_recommended_length}자 이하"
+                f"Sentences may be too long for a {age}-year-old. "
+                f"Average sentence length: {avg_sentence_length:.0f} chars, "
+                f"recommended: {max_recommended_length} chars or less"
             )
         
-        # 안전성 검사
+        # Safety check
         is_safe, issue = cls.is_safe(text)
         if not is_safe:
             suggestions.append(issue)

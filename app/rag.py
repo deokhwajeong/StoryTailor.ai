@@ -1,12 +1,12 @@
 """
 RAG (Retrieval Augmented Generation) Module
-LLM 할루시네이션 방지를 위한 검색 기반 생성 시스템
+Retrieval-based generation system for LLM hallucination prevention
 
-RAG의 핵심 원리:
-1. 외부 지식 베이스에서 관련 정보를 검색
-2. 검색된 정보를 LLM 프롬프트에 컨텍스트로 제공
-3. LLM이 검색된 사실에 기반하여 응답 생성
-4. 출처 추적으로 검증 가능성 확보
+Core principles of RAG:
+1. Search for relevant information from external knowledge base
+2. Provide retrieved information as context in LLM prompts
+3. LLM generates responses based on retrieved facts
+4. Enable verification through source tracking
 """
 
 import hashlib
@@ -30,9 +30,9 @@ except ImportError:
 
 class SimpleEmbeddingFunction:
     """
-    간단한 로컬 임베딩 함수 (네트워크 없이 작동)
-    실제 프로덕션에서는 sentence-transformers나 OpenAI embeddings 사용 권장
-    ChromaDB EmbeddingFunction 인터페이스 구현
+    Simple local embedding function (works without network)
+    For production, recommend using sentence-transformers or OpenAI embeddings
+    Implements ChromaDB EmbeddingFunction interface
     """
     
     def __init__(self, dimension: int = 384):
@@ -40,25 +40,25 @@ class SimpleEmbeddingFunction:
         self._name = "simple_embedding"
     
     def name(self) -> str:
-        """ChromaDB 인터페이스 요구사항 - 임베딩 함수 이름"""
+        """ChromaDB interface requirement - embedding function name"""
         return self._name
     
     def __call__(self, input: list[str]) -> list[list[float]]:
-        """텍스트를 임베딩 벡터로 변환"""
+        """Convert text to embedding vectors"""
         embeddings = []
         for text in input:
-            # 간단한 해시 기반 임베딩 (데모용)
-            # 실제 프로덕션에서는 더 정교한 임베딩 모델 사용
+            # Simple hash-based embedding (for demo)
+            # Use more sophisticated embedding models in production
             embedding = self._text_to_embedding(text)
             embeddings.append(embedding)
         return embeddings
     
     def embed_documents(self, documents: list[str]) -> list[list[float]]:
-        """ChromaDB 호환 메서드 - 문서 임베딩"""
+        """ChromaDB compatible method - document embedding"""
         return self(documents)
     
     def embed_query(self, input) -> list[list[float]]:
-        """ChromaDB 호환 메서드 - 쿼리 임베딩 (리스트 또는 단일 문자열 처리)"""
+        """ChromaDB compatible method - query embedding (handles list or single string)"""
         if isinstance(input, str):
             return [self._text_to_embedding(input)]
         elif isinstance(input, list):
@@ -67,45 +67,45 @@ class SimpleEmbeddingFunction:
             return [self._text_to_embedding(str(input))]
     
     def _text_to_embedding(self, text: str) -> list[float]:
-        """텍스트를 고정 크기 벡터로 변환"""
-        # 한국어 텍스트를 위한 간단한 특성 추출
+        """Convert text to fixed-size vector"""
+        # Simple feature extraction for Korean text
         features = []
         
-        # 텍스트 정규화
+        # Text normalization
         text = text.lower().strip()
         
-        # 키워드 기반 특성 (도메인 특화)
+        # Keyword-based features (domain-specific)
         keywords = {
-            "용감": 0, "토끼": 1, "친구": 2, "우정": 3, "모험": 4,
-            "숲": 5, "동물": 6, "가족": 7, "사랑": 8, "두려움": 9,
-            "용기": 10, "자연": 11, "교훈": 12, "배움": 13, "실패": 14,
-            "성공": 15, "도움": 16, "함께": 17, "존중": 18, "이해": 19
+            "brave": 0, "rabbit": 1, "friend": 2, "friendship": 3, "adventure": 4,
+            "forest": 5, "animal": 6, "family": 7, "love": 8, "fear": 9,
+            "courage": 10, "nature": 11, "lesson": 12, "learning": 13, "failure": 14,
+            "success": 15, "help": 16, "together": 17, "respect": 18, "understand": 19
         }
         
-        # 키워드 존재 여부를 특성으로
+        # Keyword presence as features
         keyword_features = [0.0] * 20
         for keyword, idx in keywords.items():
             if keyword in text:
                 keyword_features[idx] = 1.0
         
-        # 텍스트 길이 기반 특성
+        # Text length-based features
         length_features = [
-            min(len(text) / 100, 1.0),  # 정규화된 길이
-            min(len(text.split()) / 20, 1.0),  # 단어 수
+            min(len(text) / 100, 1.0),  # Normalized length
+            min(len(text.split()) / 20, 1.0),  # Word count
         ]
         
-        # 해시 기반 추가 특성 (남은 차원 채우기)
-        # SHA256을 사용하여 충돌 저항성 확보 (보안 목적이 아닌 특성 생성용)
+        # Hash-based additional features (fill remaining dimensions)
+        # Using SHA256 for collision resistance (for feature generation, not security)
         hash_hex = hashlib.sha256(text.encode()).hexdigest()
         hash_features = []
         for i in range(0, min(len(hash_hex) - 1, 32), 2):
             val = int(hash_hex[i:i+2], 16) / 255.0
             hash_features.append(val)
         
-        # 모든 특성 결합
+        # Combine all features
         features = keyword_features + length_features + hash_features
         
-        # 차원 맞추기
+        # Pad to target dimension
         while len(features) < self.dimension:
             features.append(0.0)
         
@@ -114,12 +114,12 @@ class SimpleEmbeddingFunction:
 
 class RAGSystem:
     """
-    RAG 시스템 - 할루시네이션 방지를 위한 검색 기반 생성
+    RAG System - Retrieval-based generation for hallucination prevention
     
-    사용 방법:
-    1. 지식 베이스에 문서 추가: add_documents()
-    2. 스토리 생성 시 관련 문서 검색: retrieve()
-    3. 검색된 문서를 컨텍스트로 사용하여 스토리 생성: generate_with_context()
+    Usage:
+    1. Add documents to knowledge base: add_documents()
+    2. Search related documents during story generation: retrieve()
+    3. Generate story using retrieved documents as context: generate_with_context()
     """
     
     def __init__(
@@ -128,11 +128,11 @@ class RAGSystem:
         persist_directory: Optional[str] = None
     ):
         """
-        RAG 시스템 초기화
+        Initialize RAG system
         
         Args:
-            collection_name: ChromaDB 컬렉션 이름
-            persist_directory: 벡터 DB 저장 경로 (None이면 인메모리)
+            collection_name: ChromaDB collection name
+            persist_directory: Vector DB storage path (None for in-memory)
         """
         self.collection_name = collection_name
         self.persist_directory = persist_directory
@@ -140,67 +140,67 @@ class RAGSystem:
         self._collection = None
         self._openai_client = None
         
-        # 아동용 동화에 대한 기본 지식 베이스
+        # Default knowledge base for children's stories
         self.default_knowledge = [
             {
-                "content": "동화에서 용감함은 두려움을 느끼면서도 옳은 일을 하는 것을 의미합니다. "
-                          "아이들에게 용기란 완벽하게 두려움이 없는 것이 아니라, "
-                          "두려움에도 불구하고 행동하는 것임을 알려주는 것이 중요합니다.",
-                "source": "아동 교육 원칙",
+                "content": "In stories, bravery means doing the right thing even when feeling afraid. "
+                          "It's important to teach children that courage is not the absence of fear, "
+                          "but acting despite the fear.",
+                "source": "Child Education Principles",
                 "metadata": {"category": "character_traits", "theme": "courage"}
             },
             {
-                "content": "우정의 가치는 서로를 이해하고, 어려울 때 돕고, 함께 기쁨을 나누는 것입니다. "
-                          "좋은 친구는 서로의 다름을 존중하고 받아들입니다.",
-                "source": "아동 발달 심리학",
+                "content": "The value of friendship lies in understanding each other, helping in difficult times, "
+                          "and sharing joy together. Good friends respect and accept each other's differences.",
+                "source": "Child Development Psychology",
                 "metadata": {"category": "relationships", "theme": "friendship"}
             },
             {
-                "content": "자연과 동물에 대한 이야기는 아이들에게 생태계의 중요성과 "
-                          "모든 생명을 존중하는 마음을 기를 수 있도록 도와줍니다.",
-                "source": "환경 교육 가이드",
+                "content": "Stories about nature and animals help children understand the importance of ecosystems "
+                          "and develop respect for all living things.",
+                "source": "Environmental Education Guide",
                 "metadata": {"category": "nature", "theme": "animals"}
             },
             {
-                "content": "가족의 사랑은 무조건적입니다. 부모와 자녀 간의 유대감은 "
-                          "아이의 정서적 안정과 자존감 형성에 핵심적인 역할을 합니다.",
-                "source": "가족 심리학",
+                "content": "Family love is unconditional. The bond between parents and children plays "
+                          "a crucial role in a child's emotional stability and self-esteem development.",
+                "source": "Family Psychology",
                 "metadata": {"category": "relationships", "theme": "family"}
             },
             {
-                "content": "실패와 실수는 배움의 기회입니다. 아이들에게 실패해도 괜찮다는 것을 "
-                          "알려주고, 다시 시도하는 용기를 북돋아 주는 것이 중요합니다.",
-                "source": "성장 마인드셋 연구",
+                "content": "Failure and mistakes are opportunities for learning. It's important to let children know "
+                          "that it's okay to fail and encourage them to try again.",
+                "source": "Growth Mindset Research",
                 "metadata": {"category": "life_lessons", "theme": "perseverance"}
             },
             {
-                "content": "토끼는 실제로 빠르게 달릴 수 있으며, 최대 시속 70km까지 달릴 수 있습니다. "
-                          "토끼의 긴 귀는 천적의 소리를 듣고 체온을 조절하는 데 도움을 줍니다.",
-                "source": "동물 백과사전",
+                "content": "Rabbits can actually run fast, reaching speeds up to 70 km/h. "
+                          "A rabbit's long ears help detect predators and regulate body temperature.",
+                "source": "Animal Encyclopedia",
                 "metadata": {"category": "animals", "theme": "rabbits"}
             },
             {
-                "content": "숲에는 다양한 동물들이 살고 있습니다. 다람쥐, 여우, 사슴, 새들이 "
-                          "서로 어울려 생태계를 이룹니다. 각 동물은 숲에서 중요한 역할을 합니다.",
-                "source": "생태학 기초",
+                "content": "Forests are home to diverse animals. Squirrels, foxes, deer, and birds "
+                          "live together forming an ecosystem. Each animal plays an important role in the forest.",
+                "source": "Ecology Basics",
                 "metadata": {"category": "nature", "theme": "forest"}
             },
             {
-                "content": "모험 이야기에서 주인공은 보통 집을 떠나 새로운 세계를 탐험하고, "
-                          "도전을 극복한 후 성장하여 돌아옵니다. 이것이 '영웅의 여정' 구조입니다.",
-                "source": "서사 구조론",
+                "content": "In adventure stories, the protagonist typically leaves home to explore a new world, "
+                          "overcomes challenges, and returns having grown. This is the 'Hero's Journey' structure.",
+                "source": "Narrative Structure Theory",
                 "metadata": {"category": "narrative", "theme": "adventure"}
             }
         ]
     
     @property
     def client(self):
-        """ChromaDB 클라이언트 (지연 초기화)"""
+        """ChromaDB client (lazy initialization)"""
         if self._client is None:
             if not CHROMADB_AVAILABLE:
                 raise ImportError(
-                    "chromadb 패키지가 설치되지 않았습니다. "
-                    "'pip install chromadb'를 실행하세요."
+                    "chromadb package is not installed. "
+                    "Run 'pip install chromadb'."
                 )
             
             if self.persist_directory:
@@ -213,40 +213,40 @@ class RAGSystem:
     
     @property
     def collection(self):
-        """ChromaDB 컬렉션 (지연 초기화)"""
+        """ChromaDB collection (lazy initialization)"""
         if self._collection is None:
-            # 로컬 임베딩 함수 사용 (네트워크 불필요)
+            # Use local embedding function (no network required)
             embedding_fn = SimpleEmbeddingFunction()
             self._collection = self.client.get_or_create_collection(
                 name=self.collection_name,
-                metadata={"description": "StoryTailor.ai 지식 베이스"},
+                metadata={"description": "StoryTailor.ai Knowledge Base"},
                 embedding_function=embedding_fn
             )
         return self._collection
     
     @property
     def openai_client(self):
-        """OpenAI 클라이언트 (지연 초기화)"""
+        """OpenAI client (lazy initialization)"""
         if self._openai_client is None:
             if not OPENAI_AVAILABLE:
                 raise ImportError(
-                    "openai 패키지가 설치되지 않았습니다. "
-                    "'pip install openai'를 실행하세요."
+                    "openai package is not installed. "
+                    "Run 'pip install openai'."
                 )
             api_key = os.getenv("OPENAI_API_KEY")
             if not api_key:
-                raise ValueError("OPENAI_API_KEY 환경 변수가 설정되지 않았습니다.")
+                raise ValueError("OPENAI_API_KEY environment variable is not set.")
             self._openai_client = OpenAI(api_key=api_key)
         return self._openai_client
     
     def initialize_default_knowledge(self):
-        """기본 지식 베이스 초기화"""
+        """Initialize default knowledge base"""
         documents = [doc["content"] for doc in self.default_knowledge]
         metadatas = [doc["metadata"] | {"source": doc["source"]} 
                      for doc in self.default_knowledge]
         ids = [f"default_{i}" for i in range(len(documents))]
         
-        # 기존 문서 확인 후 추가
+        # Check existing documents before adding
         existing = self.collection.get(ids=ids)
         if not existing["ids"]:
             self.collection.add(
@@ -262,12 +262,12 @@ class RAGSystem:
         metadatas: Optional[list[dict]] = None
     ):
         """
-        지식 베이스에 문서 추가
+        Add documents to knowledge base
         
         Args:
-            documents: 문서 내용 리스트
-            sources: 출처 리스트
-            metadatas: 메타데이터 리스트 (선택)
+            documents: List of document contents
+            sources: List of sources
+            metadatas: List of metadata (optional)
         """
         if metadatas is None:
             metadatas = [{"source": src} for src in sources]
@@ -290,17 +290,17 @@ class RAGSystem:
         filter_metadata: Optional[dict] = None
     ) -> list[dict]:
         """
-        관련 문서 검색
+        Search for related documents
         
         Args:
-            query: 검색 쿼리
-            n_results: 반환할 결과 수
-            filter_metadata: 메타데이터 필터 (선택)
+            query: Search query
+            n_results: Number of results to return
+            filter_metadata: Metadata filter (optional)
         
         Returns:
-            검색된 문서 리스트 (content, source, metadata, distance 포함)
+            List of retrieved documents (content, source, metadata, distance included)
         """
-        # 컬렉션이 비어있으면 기본 지식 초기화
+        # Initialize default knowledge if collection is empty
         if self.collection.count() == 0:
             self.initialize_default_knowledge()
         
@@ -331,19 +331,19 @@ class RAGSystem:
         learning_goal: Optional[str] = None
     ) -> dict:
         """
-        검색된 컨텍스트를 기반으로 스토리 생성 (할루시네이션 방지)
+        Generate story based on retrieved context (hallucination prevention)
         
         Args:
-            query: 사용자 요청
-            retrieved_docs: 검색된 문서들
-            age: 아이의 나이
-            preferences: 선호 주제
-            learning_goal: 학습 목표
+            query: User request
+            retrieved_docs: Retrieved documents
+            age: Child's age
+            preferences: Preferred topics
+            learning_goal: Learning goal
         
         Returns:
-            생성된 스토리와 메타데이터
+            Generated story and metadata
         """
-        # 컨텍스트 구성
+        # Build context
         context_parts = []
         sources = []
         for doc in retrieved_docs:
@@ -353,27 +353,27 @@ class RAGSystem:
         
         context = "\n".join(context_parts)
         
-        # RAG 강화 프롬프트 구성
-        system_prompt = f"""당신은 {age}세 아이를 위한 동화 작가입니다.
-아래 참조 정보를 반드시 활용하여 사실에 기반한 이야기를 만들어주세요.
+        # Build RAG-enhanced prompt
+        system_prompt = f"""You are a children's story writer for {age}-year-old children.
+You must use the reference information below to create fact-based stories.
 
-## 참조 정보 (이 정보에 기반하여 작성하세요):
+## Reference Information (base your writing on this):
 {context}
 
-## 중요 지침:
-1. 참조 정보에 있는 사실만 사용하세요
-2. 확실하지 않은 정보는 포함하지 마세요
-3. 아이의 나이({age}세)에 맞는 어휘와 문장 길이를 사용하세요
-4. 폭력적이거나 무서운 내용은 피하세요
-5. 긍정적인 메시지와 교훈을 담아주세요
+## Important Guidelines:
+1. Only use facts from the reference information
+2. Do not include uncertain information
+3. Use vocabulary and sentence length appropriate for a {age}-year-old
+4. Avoid violent or scary content
+5. Include positive messages and lessons
 """
         
-        user_prompt = f"""주제: {', '.join(preferences) if preferences else query}
-학습 목표: {learning_goal or '재미있고 교훈적인 이야기'}
+        user_prompt = f"""Topic: {', '.join(preferences) if preferences else query}
+Learning Goal: {learning_goal or 'A fun and educational story'}
 
-위 주제로 짧은 동화를 만들어주세요. 참조 정보에 있는 사실들을 자연스럽게 녹여주세요."""
+Please create a short story on the above topic. Naturally incorporate the facts from the reference information."""
 
-        # OpenAI API 호출
+        # OpenAI API call
         response = self.openai_client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -386,13 +386,13 @@ class RAGSystem:
         
         story = response.choices[0].message.content
         
-        # 신뢰도 점수 계산 (검색된 문서의 유사도 기반)
+        # Calculate confidence score (based on similarity of retrieved documents)
         if retrieved_docs:
             avg_distance = sum(d["distance"] or 0 for d in retrieved_docs) / len(retrieved_docs)
-            # distance가 낮을수록 유사도가 높음 (0~2 범위를 0~1로 변환)
+            # Lower distance means higher similarity (convert 0~2 range to 0~1)
             confidence_score = max(0, min(1, 1 - (avg_distance / 2)))
         else:
-            confidence_score = 0.5  # 참조 문서 없을 경우 기본값
+            confidence_score = 0.5  # Default value if no reference documents
         
         return {
             "story": story,
@@ -403,14 +403,14 @@ class RAGSystem:
     
     def fact_check(self, statement: str, threshold: float = 0.5) -> dict:
         """
-        문장의 사실 여부 확인
+        Verify the factuality of a statement
         
         Args:
-            statement: 확인할 문장
-            threshold: 유사도 임계값
+            statement: Statement to verify
+            threshold: Similarity threshold
         
         Returns:
-            검증 결과
+            Verification result
         """
         results = self.retrieve(statement, n_results=1)
         
@@ -419,7 +419,7 @@ class RAGSystem:
                 "verified": False,
                 "confidence": 0.0,
                 "source": None,
-                "message": "관련 정보를 찾을 수 없습니다."
+                "message": "No related information found."
             }
         
         top_result = results[0]
@@ -431,16 +431,16 @@ class RAGSystem:
             "confidence": round(confidence, 2),
             "source": top_result["source"],
             "related_content": top_result["content"],
-            "message": "검증됨" if confidence >= threshold else "검증되지 않음"
+            "message": "Verified" if confidence >= threshold else "Not verified"
         }
 
 
-# 전역 RAG 인스턴스
+# Global RAG instance
 _rag_instance: Optional[RAGSystem] = None
 
 
 def get_rag_system() -> RAGSystem:
-    """RAG 시스템 싱글톤 인스턴스 반환"""
+    """Return RAG system singleton instance"""
     global _rag_instance
     if _rag_instance is None:
         _rag_instance = RAGSystem()
