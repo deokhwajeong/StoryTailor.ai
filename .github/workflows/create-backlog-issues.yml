@@ -1,6 +1,11 @@
 name: Create Backlog Issues
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/create-backlog-issues.yml'
   workflow_dispatch:
     inputs:
       confirm:
@@ -11,7 +16,8 @@ on:
 jobs:
   create-issues:
     runs-on: ubuntu-latest
-    if: github.event.inputs.confirm == 'create'
+    # Run if pushed to main OR if manually triggered with confirm=create
+    if: github.event_name == 'push' || github.event.inputs.confirm == 'create'
     
     steps:
       - name: Checkout repository
