@@ -159,6 +159,8 @@ pytest tests/test_rag.py -v
 
 Track project progress and roadmap on [GitHub Projects](https://github.com/deokhwajeong/StoryTailor.ai/projects).
 
+📋 **[View Full Backlog](./BACKLOG.md)** | 🗺️ **[View Full Roadmap](./ROADMAP.md)**
+
 ### Current Progress
 - [x] Core story generation engine
 - [x] RAG-based hallucination prevention system
