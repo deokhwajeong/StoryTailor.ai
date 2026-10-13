@@ -9,14 +9,17 @@ Python · Flask · OpenAI API · SQLite · React + Vite
 
 ## Background
 
-StoryTailor came out of classroom volunteering in the Cupertino Union School
-District. In 2026 the platform was piloted with 200+ students and teachers,
-and the design was iterated on feedback from those classrooms.
+StoryTailor grew out of a 2026 pilot with one elementary classroom in the
+Cupertino Union School District. Through weekly volunteer visits, the
+classroom's book list was collected and cataloged (148 titles with Lexile and
+guided reading levels), a digital library search was built for the class,
+and students' reading was checked in person each week.
 
 That experience shaped three priorities:
 
-1. **Fit the reader.** A story is only useful if a child can read it. Every
-   story is measured after generation and regenerated if it misses the target.
+1. **Fit the reader.** A story or book is only useful if a child can read it.
+   Every generated story is measured after generation and regenerated if it
+   misses the target, and library books are recommended within the reader's band.
 2. **Close the loop.** One tap ("too easy / just right / too hard") from a
    student, or a flag from a teacher, changes the next story.
 3. **Treat student data as the school's.** No names, no ads, export and
