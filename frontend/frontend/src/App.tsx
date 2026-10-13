@@ -18,6 +18,14 @@ interface Story {
   redacted: string[];
 }
 
+interface Book {
+  id: string;
+  title: string;
+  lexile: number;
+  guided_level: string;
+  interest_matches: string[];
+}
+
 type Difficulty = 'too_easy' | 'just_right' | 'too_hard';
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = {
@@ -26,11 +34,11 @@ const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   too_hard: 'Too hard',
 };
 
-async function api<T>(path: string, code: string, body: unknown): Promise<T> {
+async function api<T>(path: string, code: string, body?: unknown): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
-    method: 'POST',
+    method: body === undefined ? 'GET' : 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Student-Code': code },
-    body: JSON.stringify(body),
+    body: body === undefined ? undefined : JSON.stringify(body),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error ?? 'Something went wrong.');
@@ -47,6 +55,28 @@ function App() {
   const [error, setError] = useState('');
   const [feedbackSent, setFeedbackSent] = useState(false);
   const [showSources, setShowSources] = useState(false);
+  const [books, setBooks] = useState<Book[] | null>(null);
+  const [loggedBook, setLoggedBook] = useState('');
+
+  const loadBooks = async () => {
+    setError('');
+    try {
+      const data = await api<{ books: Book[] }>('/api/books/recommendations', code);
+      setBooks(data.books);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not load books.');
+    }
+  };
+
+  const markRead = async (book: Book) => {
+    try {
+      await api('/api/books/log', code, { book_id: book.id, completed: true });
+      setLoggedBook(book.title);
+      await loadBooks();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not save.');
+    }
+  };
 
   const generate = async () => {
     setLoading(true);
@@ -121,6 +151,38 @@ function App() {
             {loading ? 'Writing your story...' : 'Make my story'}
           </button>
         </div>
+
+        <button
+          className="mt-3 text-blue-600 underline disabled:opacity-50"
+          onClick={loadBooks}
+          disabled={code.length < 8}
+        >
+          Find library books for me
+        </button>
+
+        {books && (
+          <section className="mt-4 w-full" aria-live="polite">
+            <h2 className="text-lg font-bold text-purple-500 mb-2">Books for you</h2>
+            {loggedBook && <p className="text-green-600 text-sm mb-2">Great job finishing {loggedBook}!</p>}
+            <ul className="flex flex-col gap-2">
+              {books.map(b => (
+                <li key={b.id} className="flex items-center justify-between gap-2 bg-purple-50 rounded-xl px-3 py-2">
+                  <span>
+                    <span className="font-semibold">{b.title}</span>
+                    <span className="block text-xs text-gray-500">
+                      {b.lexile}L · Level {b.guided_level}
+                      {b.interest_matches.length > 0 && ` · ${b.interest_matches.join(', ')}`}
+                    </span>
+                  </span>
+                  <button className="text-sm rounded-full border-2 border-green-200 px-3 py-1 hover:bg-green-100"
+                          onClick={() => markRead(b)}>
+                    I read it
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {error && <p role="alert" className="mt-4 text-red-600">{error}</p>}
 

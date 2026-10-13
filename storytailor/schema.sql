@@ -71,3 +71,17 @@ CREATE TABLE IF NOT EXISTS audit_log (
 CREATE INDEX IF NOT EXISTS idx_stories_student ON stories(student_id);
 CREATE INDEX IF NOT EXISTS idx_feedback_student ON feedback(student_id);
 CREATE INDEX IF NOT EXISTS idx_audit_student ON audit_log(student_id);
+
+-- Books a student has read from the classroom library. Feeds recommendations
+-- (already-read books are excluded) and the teacher summary.
+CREATE TABLE IF NOT EXISTS reading_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id TEXT NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+    book_id TEXT NOT NULL,
+    minutes INTEGER CHECK (minutes BETWEEN 1 AND 240),
+    completed INTEGER NOT NULL DEFAULT 1,
+    rating INTEGER CHECK (rating BETWEEN 1 AND 5),
+    created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_reading_log_student ON reading_log(student_id);

@@ -88,7 +88,15 @@ def feedback_summary(classroom_id):
         "SELECT AVG(target_level) AS avg_target, MIN(target_level) AS min_target, "
         "MAX(target_level) AS max_target FROM students WHERE classroom_id = ?", (classroom_id,)
     ).fetchone()
+    reading = db.execute(
+        "SELECT COUNT(*) AS sessions, SUM(r.minutes) AS minutes, AVG(r.rating) AS avg_rating, "
+        "COUNT(DISTINCT r.student_id) AS readers FROM reading_log r JOIN students s ON s.id = r.student_id "
+        "WHERE s.classroom_id = ?", (classroom_id,)
+    ).fetchone()
     return jsonify({
+        "reading": {"sessions": reading["sessions"], "minutes": reading["minutes"] or 0,
+                    "readers": reading["readers"],
+                    "average_rating": round(reading["avg_rating"], 2) if reading["avg_rating"] else None},
         "difficulty": {k: difficulty.get(k, 0) for k in ("too_easy", "just_right", "too_hard")},
         "rating": {"average": round(rating["avg"], 2) if rating["avg"] else None, "count": rating["n"]},
         "flags": [dict(r) for r in flags],

@@ -22,7 +22,8 @@ That experience shaped three priorities:
 3. **Treat student data as the school's.** No names, no ads, export and
    delete on request, retention by default. See [docs/PRIVACY.md](docs/PRIVACY.md).
 
-No student data from the pilot is included in this repository.
+No student data from the pilot is included in this repository. The demo
+classrooms described below are synthetic and are not pilot results.
 
 ## How it works
 
@@ -54,14 +55,35 @@ No student data from the pilot is included in this repository.
   student / teacher feedback -> adjust target level, add avoid-topics
           |
           v
-  teacher dashboard: difficulty fit, ratings, flagged stories, level spread
+  teacher dashboard: difficulty fit, ratings, flagged stories, level spread, reading minutes
 ```
+
+### Classroom library
+
+Alongside generated stories, students get **real books from the classroom
+library**. The catalog (`storytailor/data/books.json`, 148 titles) comes from
+the book list a classroom kept for its digital library search page: title,
+Lexile, and guided reading letter level, deduplicated from 155 rows.
+
+- **Recommendations** use the reader's band of 100L below to 50L above their
+  target level, rank by interest overlap and closeness to target, skip books
+  already read, and widen the band when few books are left at that level.
+- **Search** filters by title, letter level, and Lexile range, and falls back
+  to fuzzy matching (Levenshtein over title windows) because kids misspell:
+  `matlida` finds *Matilda*, `wimpy kidd` finds *Diary of a Wimpy Kid*.
+- **Reading log**: "I read it" records the book, feeds the teacher summary,
+  and removes it from future recommendations.
+
+Lexile and letter levels are kept as recorded in the classroom list and have
+not been re-verified. Topic tags are keyword guesses from titles.
 
 | Module | Responsibility |
 |---|---|
 | `storytailor/personalization.py` | Prompt building, level-fit retry loop, feedback-driven level adjustment |
 | `storytailor/privacy.py` | PII redaction, pseudonyms, keyed hashing, export, delete, retention purge, audit |
 | `storytailor/knowledge.py` | BM25 retrieval over `data/knowledge.json` so real-world facts in stories are grounded |
+| `storytailor/books.py` | Classroom library catalog, leveled recommendations, fuzzy title search |
+| `storytailor/demo.py` | Synthetic demo classrooms (generator, and importer that only accepts files marked synthetic) |
 | `storytailor/readability.py` | Flesch-Kincaid grade mapped to an approximate Lexile-style band |
 | `storytailor/safety.py` | Word-boundary blocklist and wording softener (plus provider moderation) |
 | `storytailor/llm.py` | OpenAI provider and an offline deterministic provider for demos and zero-egress use |
@@ -94,6 +116,16 @@ curl -X POST localhost:5000/api/stories -H "X-Student-Code: K7QM3XPA" \
      -H 'Content-Type: application/json' -d '{"topic": "an octopus who loves puzzles", "learning_goal": "keep trying"}'
 ```
 
+Try it with demo classrooms (synthetic, labeled "Demo"):
+
+```bash
+flask --app storytailor seed-demo        # 8 classrooms, grades 2-5, 200 fictional pseudonymous students
+# or: flask --app storytailor seed-demo --from-file path/to/synthetic_dataset.json
+# prints a demo teacher token; student codes go to instance/demo_access_codes.csv
+```
+
+See [docs/DEMO_DATA.md](docs/DEMO_DATA.md).
+
 Front end:
 
 ```bash
@@ -116,6 +148,9 @@ cd frontend/frontend && npm install && npm run dev
 | DELETE | `/api/students/<id>` | teacher | Hard delete |
 | POST | `/api/students/<id>/consent` | teacher | `school_authorized` / `pending` / `withdrawn` |
 | GET | `/api/students/<id>/audit` | teacher | Access history for a student record |
+| GET | `/api/books/recommendations` | student | Library books in my band, matched to my interests |
+| POST | `/api/books/log` | student | Record a book I read |
+| GET | `/api/books/search?q=&level=&min_lexile=&max_lexile=` | anyone | Library search with fuzzy fallback |
 | POST | `/api/readability` | anyone | Estimate the level of a passage (not stored) |
 | GET | `/api/knowledge/search?q=` | anyone | Inspect grounding facts |
 
@@ -126,9 +161,10 @@ pytest -q
 ```
 
 The suite runs fully offline. It covers the level-fit retry, feedback-driven
-level changes, PII redaction (including checking that nothing identifying
+level changes, library recommendations and fuzzy search, PII redaction (including checking that nothing identifying
 reaches the model prompt), cross-teacher access isolation, export, delete,
-consent withdrawal, and retention purge.
+consent withdrawal, retention purge, and that the demo importer rejects files
+not marked synthetic and drops display names.
 
 ## Design notes
 

@@ -87,6 +87,10 @@ def export_student(student_id: str) -> dict:
         "SELECT story_id, author_role, rating, difficulty, flag, comment, created_at "
         "FROM feedback WHERE student_id = ? ORDER BY id", (student_id,)
     ).fetchall()
+    reading = db.execute(
+        "SELECT book_id, minutes, completed, rating, created_at FROM reading_log WHERE student_id = ? ORDER BY id",
+        (student_id,),
+    ).fetchall()
     return {
         "student": {
             "id": s["id"],
@@ -100,6 +104,7 @@ def export_student(student_id: str) -> dict:
         },
         "stories": [dict(r) | {"sources": loads(r["sources"])} for r in stories],
         "feedback": [dict(r) for r in feedback],
+        "reading_log": [dict(r) for r in reading],
         "exported_at": utcnow(),
     }
 
@@ -115,12 +120,15 @@ def purge_expired(retention_days: int) -> dict:
     cutoff = (datetime.now(timezone.utc) - timedelta(days=retention_days)).isoformat(timespec="seconds")
     stories = db.execute("DELETE FROM stories WHERE created_at < ?", (cutoff,)).rowcount
     feedback = db.execute("DELETE FROM feedback WHERE created_at < ?", (cutoff,)).rowcount
+    reading = db.execute("DELETE FROM reading_log WHERE created_at < ?", (cutoff,)).rowcount
     withdrawn = [r["id"] for r in db.execute(
         "SELECT id FROM students WHERE consent_status = 'withdrawn'").fetchall()]
     for sid in withdrawn:
         delete_student(sid)
         audit("system", "purge_withdrawn_student", sid)
     audit("system", "purge_expired", detail=json.dumps(
-        {"cutoff": cutoff, "stories": stories, "feedback": feedback, "students": len(withdrawn)}))
+        {"cutoff": cutoff, "stories": stories, "feedback": feedback, "reading_log": reading,
+         "students": len(withdrawn)}))
     db.commit()
-    return {"cutoff": cutoff, "stories": stories, "feedback": feedback, "students": len(withdrawn)}
+    return {"cutoff": cutoff, "stories": stories, "feedback": feedback, "reading_log": reading,
+            "students": len(withdrawn)}

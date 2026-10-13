@@ -20,8 +20,8 @@ def create_app(test_config: dict | None = None) -> Flask:
 
     db.init_app(app)
 
-    from .routes import classroom, meta, privacy, stories
-    for module in (meta, classroom, stories, privacy):
+    from .routes import books, classroom, meta, privacy, stories
+    for module in (meta, classroom, stories, books, privacy):
         app.register_blueprint(module.bp)
 
     @app.errorhandler(HTTPException)
@@ -64,6 +64,26 @@ def _register_cli(app: Flask) -> None:
         )
         conn.commit()
         click.echo(f"Teacher token for {display_name} (store it now, it is not shown again):\n{token}")
+
+    @app.cli.command("seed-demo")
+    @click.option("--from-file", "from_file", type=click.Path(exists=True, dir_okay=False),
+                  help="Synthetic dataset JSON (must have metadata.is_synthetic = true).")
+    @click.option("--seed", default=2026, show_default=True)
+    def seed_demo(from_file, seed):
+        """Load fictional demo classrooms. Never use with real student data."""
+        from pathlib import Path
+
+        from . import demo
+
+        out = Path(app.instance_path) / "demo_access_codes.csv"
+        try:
+            result = demo.load_file(Path(from_file), out) if from_file else demo.generate(out, seed=seed)
+        except demo.NotSynthetic as e:
+            raise click.ClickException(str(e))
+        token = result.pop("teacher_token")
+        click.echo(f"Seeded demo data: {result}")
+        click.echo(f"Demo teacher token: {token}")
+        click.echo(f"Student access codes written to {out}")
 
     @app.cli.command("purge-expired")
     def purge_command():
