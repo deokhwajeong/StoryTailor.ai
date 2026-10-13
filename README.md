@@ -1,185 +1,157 @@
+# StoryTailor
 
+**A personalized reading platform for elementary classrooms.** Students get short,
+original stories pitched at their own reading level and built around what they
+care about. Teachers see how the class is responding. Student data stays
+minimal, pseudonymous, and under the school's control.
 
-# StoryTailor.ai
+Python · Flask · OpenAI API · SQLite · React + Vite
 
-StoryTailor.ai is a research-driven project focused on generative AI applications for child-safe storytelling and reading platforms. It leverages OpenAI-based generative AI and machine learning to provide personalized story generation, reading diagnostics, book recommendations, reading practice, voice reading, and analytics reports tailored to children's reading levels, preferences, and learning goals.
+## Background
 
-## Key Features
-- **Generative AI Storytelling**: Create personalized stories based on age, reading level, preferences, and learning goals
-- **🆕 RAG-based Hallucination Prevention**: Fact-based story generation using Retrieval Augmented Generation
-- **Reading Level Diagnostics**: Automatically assess and track children's reading skills (e.g., Lexile)
-- **AI Book Recommendations**: Suggest books based on diagnostics and preferences
-- **Reading Practice & Voice Reading**: Support reading practice and voice reading (with speech recognition integration)
-- **Analytics Reports**: Generate detailed reports on reading habits, progress, and recommendations
-- **Narrative Structure Analysis**: Explore and apply various story structures and plots
-- **Accessibility & Safety**: Built-in content filtering and age-appropriate safety guidelines
-- **ML-based Personalization**: Continuous personalization based on feedback, interactions, and reading data
+StoryTailor came out of classroom volunteering in the Cupertino Union School
+District. In 2026 the platform was piloted with 200+ students and teachers,
+and the design was iterated on feedback from those classrooms.
 
-## RAG (Retrieval Augmented Generation) - Hallucination Prevention
+That experience shaped three priorities:
 
-### What is RAG?
-RAG (Retrieval Augmented Generation) is a technology to **prevent hallucinations** in LLMs. It prevents LLMs from generating information they haven't learned and generates responses based on verified information.
+1. **Fit the reader.** A story is only useful if a child can read it. Every
+   story is measured after generation and regenerated if it misses the target.
+2. **Close the loop.** One tap ("too easy / just right / too hard") from a
+   student, or a flag from a teacher, changes the next story.
+3. **Treat student data as the school's.** No names, no ads, export and
+   delete on request, retention by default. See [docs/PRIVACY.md](docs/PRIVACY.md).
 
-### How It Works
+No student data from the pilot is included in this repository.
+
+## How it works
+
 ```
-1. User Request → 2. Knowledge Base Search → 3. Relevant Doc Extraction → 4. Context + LLM → 5. Fact-based Response
-       ↓                      ↓                         ↓                        ↓                    ↓
-  "Brave Rabbit"      ChromaDB Search         Courage, Rabbit Info      Prompt Enhancement    Verified Story
+ student types a topic
+          |
+          v
+  PII redaction  ---->  audit log (kinds removed, never values)
+          |
+          v
+  safety check (topic) ---- blocked? -> friendly 422
+          |
+          v
+  retrieve grounding facts (BM25 over curated knowledge base)
+          |
+          v
+  prompt = grade + target level + interests + avoid-topics + facts
+          |
+          v
+  OpenAI chat completion (store=False, no student identifier)
+          |
+          v
+  soften wording -> measure readability -> too hard? regenerate once with SIMPLIFY
+          |
+          v
+  safety check (story + moderation API) -> save -> return story with sources
+          |
+          v
+  student / teacher feedback -> adjust target level, add avoid-topics
+          |
+          v
+  teacher dashboard: difficulty fit, ratings, flagged stories, level spread
 ```
 
-### Key Features
-1. **Knowledge Base Management**: Vector database using ChromaDB
-2. **Semantic Search**: Semantically search for information related to user requests
-3. **Context Injection**: Include retrieved information in LLM prompts
-4. **Fact Checking**: Verify that generated content matches the knowledge base
-5. **Source Tracking**: Provide sources of referenced information
-6. **Confidence Score**: Provide numerical confidence scores for generated content
+| Module | Responsibility |
+|---|---|
+| `storytailor/personalization.py` | Prompt building, level-fit retry loop, feedback-driven level adjustment |
+| `storytailor/privacy.py` | PII redaction, pseudonyms, keyed hashing, export, delete, retention purge, audit |
+| `storytailor/knowledge.py` | BM25 retrieval over `data/knowledge.json` so real-world facts in stories are grounded |
+| `storytailor/readability.py` | Flesch-Kincaid grade mapped to an approximate Lexile-style band |
+| `storytailor/safety.py` | Word-boundary blocklist and wording softener (plus provider moderation) |
+| `storytailor/llm.py` | OpenAI provider and an offline deterministic provider for demos and zero-egress use |
+| `storytailor/routes/` | Flask blueprints: classroom, stories, privacy, public utilities |
+| `frontend/frontend/` | Student app (React + TypeScript + Tailwind) |
 
-### Usage Example
-```python
-from app.rag import get_rag_system
+## Quick start
 
-# Initialize RAG system
-rag = get_rag_system()
-
-# Add knowledge
-rag.add_documents(
-    documents=["Rabbits can run up to 70 km/h."],
-    sources=["Animal Encyclopedia"]
-)
-
-# Search for relevant information
-results = rag.retrieve("fast rabbit", n_results=3)
-
-# Fact check
-fact_result = rag.fact_check("Rabbits can run fast")
-print(fact_result)  # {"verified": True, "confidence": 0.85, ...}
-```
-
-### RAG vs Standard LLM Comparison
-| Category | Standard LLM | With RAG |
-|----------|-------------|----------|
-| Hallucination | High | Low |
-| Factual Accuracy | Medium | High |
-| Source Provided | ❌ | ✅ |
-| Verifiability | ❌ | ✅ |
-| Latest Information | ❌ (Limited to training data) | ✅ (Knowledge base updates) |
-
-## Tech Stack
-- Python 3.10+
-- PyTorch (or TensorFlow)
-- OpenAI API (GPT series)
-- FastAPI (RESTful API server)
-- Pydantic (data validation)
-- **ChromaDB** (Vector Database for RAG)
-- **LangChain** (LLM Orchestration)
-- pytest (testing)
-- (Optional) SpeechRecognition, TTS for voice features
-
-## Installation & Usage
 ```bash
-# Install dependencies
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env            # add OPENAI_API_KEY, or set STORYTAILOR_LLM_PROVIDER=offline
 
-# Set OpenAI API Key
-export OPENAI_API_KEY="your-api-key-here"
-
-# Run the server
-uvicorn app.main:app --reload
+flask --app storytailor init-db
+flask --app storytailor create-teacher "Room 12"     # prints a teacher token once
+flask --app storytailor run
 ```
 
-### API Documentation
-After starting the server, you can view the API documentation via Swagger UI at http://localhost:8000/docs.
-
-## Project Structure
-```
-StoryTailor.ai/
-├── app/
-│   ├── __init__.py         # Package initialization
-│   ├── main.py             # FastAPI entry point & API routing
-│   ├── schemas.py          # Data models & validation (Pydantic)
-│   ├── story_engine.py     # Story generation engine (RAG integration)
-│   ├── rag.py              # 🆕 RAG system (Hallucination prevention)
-│   └── safety.py           # Safety/filtering module
-├── tests/
-│   ├── test_api.py         # API integration tests
-│   ├── test_rag.py         # RAG system unit tests
-│   └── test_safety.py      # Safety filter tests
-├── frontend/
-│   └── frontend/           # React + Vite frontend
-├── requirements.txt        # Python dependencies
-└── README.md               # Project documentation
-```
-
-## Example API
-```http
-POST /generate_story
-{
-  "age": 7,
-  "reading_level": 420,
-  "preferences": ["animals", "adventure"],
-  "learning_goal": "value of friendship",
-  "use_rag": true  // Use RAG to prevent hallucinations
-}
-
-Response:
-{
-  "story": "Once upon a time, a brave rabbit...",
-  "sources": ["Child Education Principles", "Animal Encyclopedia"],  // Reference sources
-  "fact_checked": true,
-  "confidence_score": 0.87  // Confidence score
-}
-
-POST /rag/fact_check
-{
-  "statement": "Rabbits can run at 70 km/h"
-}
-
-Response:
-{
-  "verified": true,
-  "confidence": 0.85,
-  "source": "Animal Encyclopedia",
-  "message": "Verified"
-}
-
-GET /rag/search?query=brave+rabbit&n_results=3
-```
-
-## Testing
 ```bash
-# Run all tests
-pytest tests/ -v
+TOKEN=...   # from create-teacher
 
-# Run specific test file
-pytest tests/test_rag.py -v
+# Teacher: create a class and 25 pseudonymous student accounts
+curl -X POST localhost:5000/api/classrooms -H "Authorization: Bearer $TOKEN" \
+     -H 'Content-Type: application/json' -d '{"name": "Grade 3", "grade": 3}'
+curl -X POST localhost:5000/api/classrooms/1/students -H "Authorization: Bearer $TOKEN" \
+     -H 'Content-Type: application/json' -d '{"count": 25, "interests": ["ocean", "space"]}'
+
+# Student: ask for a story with the access code from the printed roster
+curl -X POST localhost:5000/api/stories -H "X-Student-Code: K7QM3XPA" \
+     -H 'Content-Type: application/json' -d '{"topic": "an octopus who loves puzzles", "learning_goal": "keep trying"}'
 ```
 
-## Project Roadmap
+Front end:
 
-Track project progress and roadmap on [GitHub Projects](https://github.com/users/deokhwajeong/projects/7/views/2).
+```bash
+cd frontend/frontend && npm install && npm run dev
+```
 
-📋 **[View Full Backlog](./BACKLOG.md)** | 🗺️ **[View Full Roadmap](./ROADMAP.md)** | 📊 **[Projects Guide](./PROJECTS_GUIDE.md)**
+## API
 
-### Current Progress
-- [x] Core story generation engine
-- [x] RAG-based hallucination prevention system
-- [x] FastAPI server setup
-- [x] Safety filtering module
-- [ ] Voice reading features (TTS/STT)
-- [ ] Reading level diagnostics
-- [ ] AI book recommendation engine
-- [ ] Analytics report dashboard
-- [ ] Frontend UI completion
+| Method | Path | Who | Purpose |
+|---|---|---|---|
+| POST | `/api/classrooms` | teacher | Create a classroom |
+| POST | `/api/classrooms/<id>/students` | teacher | Create pseudonymous accounts; access codes returned once |
+| GET | `/api/classrooms/<id>/students` | teacher | Roster by pseudonym, level, activity |
+| GET | `/api/classrooms/<id>/feedback-summary` | teacher | Difficulty fit, ratings, flags, level spread |
+| POST | `/api/stories` | student | Generate a personalized, grounded, leveled story |
+| GET | `/api/stories` | student | My recent stories |
+| POST | `/api/stories/<id>/feedback` | student | Rating, difficulty vote, or flag |
+| POST | `/api/stories/<id>/teacher-feedback` | teacher | Teacher review of a student's story |
+| GET | `/api/students/<id>/export` | teacher | Everything stored about a student (records request) |
+| DELETE | `/api/students/<id>` | teacher | Hard delete |
+| POST | `/api/students/<id>/consent` | teacher | `school_authorized` / `pending` / `withdrawn` |
+| GET | `/api/students/<id>/audit` | teacher | Access history for a student record |
+| POST | `/api/readability` | anyone | Estimate the level of a passage (not stored) |
+| GET | `/api/knowledge/search?q=` | anyone | Inspect grounding facts |
 
-### Future Plans
-1. **Phase 1**: Core feature stabilization and test enhancement
-2. **Phase 2**: Voice features and reading diagnostics system development
-3. **Phase 3**: Personalized recommendation engine and analytics expansion
-4. **Phase 4**: Frontend completion and user feedback integration
+## Tests
 
-## Contributing
-PRs and issues are welcome! We encourage participation from those interested in child safety, AI ethics, and reading education.
+```bash
+pytest -q
+```
+
+The suite runs fully offline. It covers the level-fit retry, feedback-driven
+level changes, PII redaction (including checking that nothing identifying
+reaches the model prompt), cross-teacher access isolation, export, delete,
+consent withdrawal, and retention purge.
+
+## Design notes
+
+- **Why Flask and SQLite.** A school pilot needs something a single volunteer
+  can deploy and a district IT reviewer can read end to end. One process, one
+  file database the district owns, no external services besides the model API.
+- **Why BM25 instead of a vector DB.** The grounding corpus is small and
+  curated by hand for accuracy. Lexical retrieval is transparent, testable,
+  and runs offline. Swapping in embeddings is a contained change in `knowledge.py`.
+- **Why measure after generating.** Asking a model for "grade 2 vocabulary"
+  is not reliable on its own. Measuring the output and retrying once with a
+  simplification instruction keeps stories near the target without a long loop.
+- **Reading levels are approximate.** The Lexile-style number is mapped from
+  Flesch-Kincaid grade and is meant for relative adjustment, not as an
+  official Lexile measure.
+
+## Roadmap
+
+- Read-aloud (TTS) and fluency practice with on-device speech recognition
+- Teacher web dashboard (currently JSON endpoints)
+- Spanish and Korean story output for multilingual classrooms
+- Teacher-editable knowledge base with review workflow
 
 ## License
-MIT License - See [LICENSE](LICENSE) for details.
+
+MIT. See [LICENSE](LICENSE).

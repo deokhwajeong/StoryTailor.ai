@@ -13,7 +13,7 @@ module.exports = {
         pastelPurple: '#E1D5FF',
       },
       fontFamily: {
-        sans: ["Gowun Dodum", "Pretendard", "Noto Sans KR", "sans-serif"],
+        sans: ["Atkinson Hyperlegible", "system-ui", "sans-serif"],
       },
     },
   },
