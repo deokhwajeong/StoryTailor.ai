@@ -1,0 +1,1306 @@
+[
+ {
+  "id": "b001",
+  "title": "The Never Girls - In a blink",
+  "lexile": 480,
+  "guided_level": "N",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b002",
+  "title": "The Never Girls - dandelion wish",
+  "lexile": 500,
+  "guided_level": "N",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b003",
+  "title": "The Never Girls - from the mist",
+  "lexile": 500,
+  "guided_level": "N",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b004",
+  "title": "The Never Girls - the space between",
+  "lexile": 620,
+  "guided_level": "O",
+  "tags": [
+   "adventure",
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b005",
+  "title": "Junie B., first grader - Toothless wonder",
+  "lexile": 510,
+  "guided_level": "N",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b006",
+  "title": "Agent Amelia - Zombie cows!",
+  "lexile": 780,
+  "guided_level": "S",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b007",
+  "title": "Junie B.jones and stupid smelly bus",
+  "lexile": 520,
+  "guided_level": "N",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b008",
+  "title": "Propeties of Water",
+  "lexile": 1210,
+  "guided_level": "Z+",
+  "tags": [
+   "science"
+  ]
+ },
+ {
+  "id": "b009",
+  "title": "Rocks and Mineral",
+  "lexile": 1050,
+  "guided_level": "X",
+  "tags": [
+   "science"
+  ]
+ },
+ {
+  "id": "b010",
+  "title": "Meet a Mail Carrier!",
+  "lexile": 560,
+  "guided_level": "N",
+  "tags": [
+   "community"
+  ]
+ },
+ {
+  "id": "b011",
+  "title": "Grassland food chain",
+  "lexile": 770,
+  "guided_level": "S",
+  "tags": [
+   "science"
+  ]
+ },
+ {
+  "id": "b012",
+  "title": "Desert Food Chains",
+  "lexile": 850,
+  "guided_level": "T",
+  "tags": [
+   "science"
+  ]
+ },
+ {
+  "id": "b013",
+  "title": "I begin with spring",
+  "lexile": 1040,
+  "guided_level": "Z+",
+  "tags": [
+   "science"
+  ]
+ },
+ {
+  "id": "b014",
+  "title": "Unicorn Academy - Evie and Sunshine",
+  "lexile": 670,
+  "guided_level": "P",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b015",
+  "title": "Silver Argiope Spiders",
+  "lexile": 510,
+  "guided_level": "N",
+  "tags": [
+   "animals",
+   "science"
+  ]
+ },
+ {
+  "id": "b016",
+  "title": "Follow Me",
+  "lexile": 500,
+  "guided_level": "N",
+  "tags": []
+ },
+ {
+  "id": "b017",
+  "title": "Rain Forest Ecosystems",
+  "lexile": 850,
+  "guided_level": "T",
+  "tags": [
+   "science"
+  ]
+ },
+ {
+  "id": "b018",
+  "title": "Food Chains",
+  "lexile": 660,
+  "guided_level": "T",
+  "tags": [
+   "science"
+  ]
+ },
+ {
+  "id": "b019",
+  "title": "Where is Hannah?",
+  "lexile": 190,
+  "guided_level": "D",
+  "tags": []
+ },
+ {
+  "id": "b020",
+  "title": "STONE FOX",
+  "lexile": 550,
+  "guided_level": "O",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b021",
+  "title": "Aven Green",
+  "lexile": 690,
+  "guided_level": "P",
+  "tags": []
+ },
+ {
+  "id": "b022",
+  "title": "Bugs!",
+  "lexile": 880,
+  "guided_level": "S",
+  "tags": [
+   "science"
+  ]
+ },
+ {
+  "id": "b023",
+  "title": "PICKLE",
+  "lexile": 700,
+  "guided_level": "Q",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b024",
+  "title": "The good guys of Baseball",
+  "lexile": 710,
+  "guided_level": "Q",
+  "tags": [
+   "sports"
+  ]
+ },
+ {
+  "id": "b025",
+  "title": "Frankie's Magic Soccer Ball",
+  "lexile": 540,
+  "guided_level": "N",
+  "tags": [
+   "fantasy",
+   "sports"
+  ]
+ },
+ {
+  "id": "b026",
+  "title": "Stop That Mop!",
+  "lexile": 175,
+  "guided_level": "F",
+  "tags": []
+ },
+ {
+  "id": "b027",
+  "title": "A house for Hermit Crab",
+  "lexile": 540,
+  "guided_level": "N",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b028",
+  "title": "The Lamb and the Butterfly",
+  "lexile": 520,
+  "guided_level": "N",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b029",
+  "title": "The important Thing about Margaret wise brown",
+  "lexile": 620,
+  "guided_level": "O",
+  "tags": []
+ },
+ {
+  "id": "b030",
+  "title": "Slowly Slowly Slowly said the Sloth",
+  "lexile": 580,
+  "guided_level": "O",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b031",
+  "title": "States of Matter",
+  "lexile": 490,
+  "guided_level": "K",
+  "tags": [
+   "science"
+  ]
+ },
+ {
+  "id": "b032",
+  "title": "Mail Carriers at work",
+  "lexile": 350,
+  "guided_level": "L",
+  "tags": [
+   "community"
+  ]
+ },
+ {
+  "id": "b033",
+  "title": "Dear Mr.Bluberry",
+  "lexile": 660,
+  "guided_level": "O",
+  "tags": []
+ },
+ {
+  "id": "b034",
+  "title": "The Berenstain Bears and too much Junk Food",
+  "lexile": 630,
+  "guided_level": "O",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b035",
+  "title": "The Tiger-Eater",
+  "lexile": 550,
+  "guided_level": "N",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b036",
+  "title": "Oliver Finds His Way",
+  "lexile": 380,
+  "guided_level": "K",
+  "tags": []
+ },
+ {
+  "id": "b037",
+  "title": "Chrysanthemum",
+  "lexile": 460,
+  "guided_level": "M",
+  "tags": []
+ },
+ {
+  "id": "b038",
+  "title": "Pet the Cat and his magic Sunglasses",
+  "lexile": 440,
+  "guided_level": "M",
+  "tags": [
+   "animals",
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b039",
+  "title": "Shelia Rae the Brave",
+  "lexile": 500,
+  "guided_level": "N",
+  "tags": []
+ },
+ {
+  "id": "b040",
+  "title": "The Cool Bean",
+  "lexile": 530,
+  "guided_level": "N",
+  "tags": []
+ },
+ {
+  "id": "b041",
+  "title": "The Capybaras",
+  "lexile": 500,
+  "guided_level": "N",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b042",
+  "title": "Diary of a Worm",
+  "lexile": 510,
+  "guided_level": "N",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b043",
+  "title": "Around the World in 80 ways",
+  "lexile": 1130,
+  "guided_level": "Z",
+  "tags": [
+   "adventure"
+  ]
+ },
+ {
+  "id": "b044",
+  "title": "Brothers at Bat",
+  "lexile": 710,
+  "guided_level": "Q",
+  "tags": [
+   "sports"
+  ]
+ },
+ {
+  "id": "b045",
+  "title": "AARON JUDGE VS.BABE RUTH",
+  "lexile": 880,
+  "guided_level": "U",
+  "tags": [
+   "sports"
+  ]
+ },
+ {
+  "id": "b046",
+  "title": "Clara Caterpillar",
+  "lexile": 550,
+  "guided_level": "N",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b047",
+  "title": "Skippyjon Jones and the Big Bones",
+  "lexile": 600,
+  "guided_level": "O",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b048",
+  "title": "Skippyjon Jones",
+  "lexile": 740,
+  "guided_level": "R",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b049",
+  "title": "Away with Words",
+  "lexile": 750,
+  "guided_level": "R",
+  "tags": []
+ },
+ {
+  "id": "b050",
+  "title": "Face to Face Butterflies",
+  "lexile": 890,
+  "guided_level": "P",
+  "tags": [
+   "animals",
+   "science"
+  ]
+ },
+ {
+  "id": "b051",
+  "title": "All About Bears",
+  "lexile": 350,
+  "guided_level": "K",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b052",
+  "title": "Harry Potter And The Chamber Of Secrets",
+  "lexile": 940,
+  "guided_level": "W",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b053",
+  "title": "The Pigeon Finds a Hot Dog!",
+  "lexile": 410,
+  "guided_level": "L",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b054",
+  "title": "Creatures of the Rain Forest",
+  "lexile": 1020,
+  "guided_level": "Z",
+  "tags": [
+   "animals",
+   "science"
+  ]
+ },
+ {
+  "id": "b055",
+  "title": "Friend or Foe: The Whole Truth about Animals That People Love to Hate",
+  "lexile": 850,
+  "guided_level": "T",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b056",
+  "title": "Stinkiest!: 20 Smelly Animals",
+  "lexile": 870,
+  "guided_level": "U",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b057",
+  "title": "Matter",
+  "lexile": 550,
+  "guided_level": "N",
+  "tags": [
+   "science"
+  ]
+ },
+ {
+  "id": "b058",
+  "title": "The Mitten",
+  "lexile": 600,
+  "guided_level": "O",
+  "tags": []
+ },
+ {
+  "id": "b059",
+  "title": "Exploring According to Og the Frog",
+  "lexile": 670,
+  "guided_level": "P",
+  "tags": [
+   "adventure",
+   "animals"
+  ]
+ },
+ {
+  "id": "b060",
+  "title": "Peter Powers",
+  "lexile": 510,
+  "guided_level": "Q",
+  "tags": []
+ },
+ {
+  "id": "b061",
+  "title": "There Is a Carrot in My Ear and Other Nood…",
+  "lexile": 490,
+  "guided_level": "N",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b062",
+  "title": "Pippi Goes on Board",
+  "lexile": 870,
+  "guided_level": "U",
+  "tags": []
+ },
+ {
+  "id": "b063",
+  "title": "Frederick",
+  "lexile": 590,
+  "guided_level": "O",
+  "tags": []
+ },
+ {
+  "id": "b064",
+  "title": "Kitty's Magic Star The Little Farm Cat",
+  "lexile": 660,
+  "guided_level": "P",
+  "tags": [
+   "animals",
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b065",
+  "title": "Time Dogs: Barry and the Great Mountain Rescue",
+  "lexile": 530,
+  "guided_level": "N",
+  "tags": [
+   "adventure",
+   "animals"
+  ]
+ },
+ {
+  "id": "b066",
+  "title": "Darth Paper Strikes Back",
+  "lexile": 720,
+  "guided_level": "Q",
+  "tags": []
+ },
+ {
+  "id": "b067",
+  "title": "There's a Dragon in my Popcorn",
+  "lexile": 590,
+  "guided_level": "O",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b068",
+  "title": "Matt and Dave YUCK",
+  "lexile": 550,
+  "guided_level": "N",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b069",
+  "title": "Stick Dog Dreams of Ice Cream",
+  "lexile": 700,
+  "guided_level": "Q",
+  "tags": [
+   "animals",
+   "humor"
+  ]
+ },
+ {
+  "id": "b070",
+  "title": "The Story of Doctor Dolittle",
+  "lexile": 840,
+  "guided_level": "T",
+  "tags": []
+ },
+ {
+  "id": "b071",
+  "title": "Roald Dahl Matilda",
+  "lexile": 840,
+  "guided_level": "S",
+  "tags": []
+ },
+ {
+  "id": "b072",
+  "title": "Adventures Of Henry Whiskers",
+  "lexile": 770,
+  "guided_level": "S",
+  "tags": [
+   "adventure",
+   "animals"
+  ]
+ },
+ {
+  "id": "b073",
+  "title": "Finding Serendipity",
+  "lexile": 900,
+  "guided_level": "V",
+  "tags": []
+ },
+ {
+  "id": "b074",
+  "title": "Ivy and the Goblins",
+  "lexile": 620,
+  "guided_level": "O",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b075",
+  "title": "The Case of the Lost Boy",
+  "lexile": 570,
+  "guided_level": "O",
+  "tags": [
+   "mystery"
+  ]
+ },
+ {
+  "id": "b076",
+  "title": "Class Pet Squad: Journey to the Center of Town",
+  "lexile": 600,
+  "guided_level": "N",
+  "tags": [
+   "adventure",
+   "community"
+  ]
+ },
+ {
+  "id": "b077",
+  "title": "Ready, Steady, Swim! (Mermaid School 3)",
+  "lexile": 650,
+  "guided_level": "P",
+  "tags": [
+   "community",
+   "fantasy",
+   "sports"
+  ]
+ },
+ {
+  "id": "b078",
+  "title": "Junie B., First Grader Boss of Lunch",
+  "lexile": 560,
+  "guided_level": "N",
+  "tags": [
+   "community",
+   "humor"
+  ]
+ },
+ {
+  "id": "b079",
+  "title": "Anne of Avonlea",
+  "lexile": 1020,
+  "guided_level": "Z+",
+  "tags": []
+ },
+ {
+  "id": "b080",
+  "title": "Ruby the Runaway Kitten",
+  "lexile": 780,
+  "guided_level": "S",
+  "tags": []
+ },
+ {
+  "id": "b081",
+  "title": "Bad Kitty Drawn to Trouble",
+  "lexile": 570,
+  "guided_level": "O",
+  "tags": [
+   "animals",
+   "humor"
+  ]
+ },
+ {
+  "id": "b082",
+  "title": "Bad Kitty For President",
+  "lexile": 690,
+  "guided_level": "P",
+  "tags": [
+   "animals",
+   "community",
+   "humor"
+  ]
+ },
+ {
+  "id": "b083",
+  "title": "Bad Kitty Gets A Bath",
+  "lexile": 650,
+  "guided_level": "P",
+  "tags": [
+   "animals",
+   "humor"
+  ]
+ },
+ {
+  "id": "b084",
+  "title": "Bad Kitty: School Daze",
+  "lexile": 570,
+  "guided_level": "N",
+  "tags": [
+   "animals",
+   "community",
+   "humor"
+  ]
+ },
+ {
+  "id": "b085",
+  "title": "Bad Kitty Takes the Test",
+  "lexile": 650,
+  "guided_level": "P",
+  "tags": [
+   "animals",
+   "humor"
+  ]
+ },
+ {
+  "id": "b086",
+  "title": "Happy Birthday, Bad Kitty",
+  "lexile": 610,
+  "guided_level": "O",
+  "tags": [
+   "animals",
+   "humor"
+  ]
+ },
+ {
+  "id": "b087",
+  "title": "Bad Kitty Meets The Baby",
+  "lexile": 720,
+  "guided_level": "Q",
+  "tags": [
+   "animals",
+   "humor"
+  ]
+ },
+ {
+  "id": "b088",
+  "title": "Bad Kitty Vs. Uncle Murray",
+  "lexile": 620,
+  "guided_level": "O",
+  "tags": [
+   "animals",
+   "humor"
+  ]
+ },
+ {
+  "id": "b089",
+  "title": "Bad Kitty: Kitten Trouble",
+  "lexile": 560,
+  "guided_level": "N",
+  "tags": [
+   "animals",
+   "humor"
+  ]
+ },
+ {
+  "id": "b090",
+  "title": "Tales From A Not-So-Graceful Ice Princess",
+  "lexile": 750,
+  "guided_level": "R",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b091",
+  "title": "Harry Potter and the Sorcerer's Stone",
+  "lexile": 880,
+  "guided_level": "U",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b092",
+  "title": "The Wild World Handbook: Creatures",
+  "lexile": 1030,
+  "guided_level": "Z",
+  "tags": [
+   "animals",
+   "science"
+  ]
+ },
+ {
+  "id": "b093",
+  "title": "I Don't Believe It, Archie!",
+  "lexile": 690,
+  "guided_level": "P",
+  "tags": []
+ },
+ {
+  "id": "b094",
+  "title": "Lola Levine and the Vacation Dream",
+  "lexile": 670,
+  "guided_level": "P",
+  "tags": [
+   "animals",
+   "community"
+  ]
+ },
+ {
+  "id": "b095",
+  "title": "My Father's Dragon",
+  "lexile": 960,
+  "guided_level": "W",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b096",
+  "title": "Love, Ruby Lavender",
+  "lexile": 630,
+  "guided_level": "O",
+  "tags": []
+ },
+ {
+  "id": "b097",
+  "title": "Space Mice you're mine, captain",
+  "lexile": 630,
+  "guided_level": "O",
+  "tags": [
+   "adventure",
+   "animals"
+  ]
+ },
+ {
+  "id": "b098",
+  "title": "Geronimo's Valentine",
+  "lexile": 520,
+  "guided_level": "N",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b099",
+  "title": "The Mouse Island Marathon",
+  "lexile": 560,
+  "guided_level": "N",
+  "tags": [
+   "animals",
+   "sports"
+  ]
+ },
+ {
+  "id": "b100",
+  "title": "Watch Your Whiskers, Stilton!",
+  "lexile": 470,
+  "guided_level": "M",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b101",
+  "title": "Thea Stilton and the Ice Treasure",
+  "lexile": 740,
+  "guided_level": "Q",
+  "tags": [
+   "adventure",
+   "animals"
+  ]
+ },
+ {
+  "id": "b102",
+  "title": "Amelia Bedelia Dances Off",
+  "lexile": 710,
+  "guided_level": "Q",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b103",
+  "title": "Dan's Game",
+  "lexile": 240,
+  "guided_level": "H",
+  "tags": []
+ },
+ {
+  "id": "b104",
+  "title": "Junie B., First Grader: Shipwrecked",
+  "lexile": 560,
+  "guided_level": "N",
+  "tags": [
+   "adventure",
+   "humor"
+  ]
+ },
+ {
+  "id": "b105",
+  "title": "The Hunted Library",
+  "lexile": 520,
+  "guided_level": "N",
+  "tags": [
+   "mystery"
+  ]
+ },
+ {
+  "id": "b106",
+  "title": "13th Street The Shocking Shark Showdown",
+  "lexile": 420,
+  "guided_level": "L",
+  "tags": []
+ },
+ {
+  "id": "b107",
+  "title": "Campfire Stories",
+  "lexile": 630,
+  "guided_level": "O",
+  "tags": [
+   "adventure"
+  ]
+ },
+ {
+  "id": "b108",
+  "title": "Sideways Stories from Wayside School",
+  "lexile": 460,
+  "guided_level": "M",
+  "tags": [
+   "community",
+   "humor"
+  ]
+ },
+ {
+  "id": "b109",
+  "title": "Unicorn Academy Treasure Hunt #1: Lyra and…",
+  "lexile": 600,
+  "guided_level": "O",
+  "tags": [
+   "adventure",
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b110",
+  "title": "Unicorn University comet's royal cake",
+  "lexile": 780,
+  "guided_level": "S",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b111",
+  "title": "Unicorn Academy Nature Magic #1: Lily and …",
+  "lexile": 660,
+  "guided_level": "P",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b112",
+  "title": "Minsha's Night on Ellis Island",
+  "lexile": 490,
+  "guided_level": "M",
+  "tags": [
+   "community"
+  ]
+ },
+ {
+  "id": "b113",
+  "title": "Amelia bedelia Cleans up",
+  "lexile": 630,
+  "guided_level": "O",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b114",
+  "title": "Emily Windsnap And The Land Of The Midnigh…",
+  "lexile": 600,
+  "guided_level": "O",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b115",
+  "title": "Amelia Bedelia Goes Wild!: #4",
+  "lexile": 670,
+  "guided_level": "P",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b116",
+  "title": "Princess in Disguise: A Tale of the Wide-A…",
+  "lexile": 790,
+  "guided_level": "S",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b117",
+  "title": "Hooray for Anna Hibiscus!",
+  "lexile": 660,
+  "guided_level": "P",
+  "tags": []
+ },
+ {
+  "id": "b118",
+  "title": "Bad Hair Day",
+  "lexile": 700,
+  "guided_level": "Q",
+  "tags": []
+ },
+ {
+  "id": "b119",
+  "title": "Ice Castle",
+  "lexile": 570,
+  "guided_level": "N",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b120",
+  "title": "Shipwrecked",
+  "lexile": 560,
+  "guided_level": "N",
+  "tags": [
+   "adventure"
+  ]
+ },
+ {
+  "id": "b121",
+  "title": "Dumb Bunny",
+  "lexile": 410,
+  "guided_level": "L",
+  "tags": [
+   "animals",
+   "humor"
+  ]
+ },
+ {
+  "id": "b122",
+  "title": "Cheater Pants",
+  "lexile": 340,
+  "guided_level": "J",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b123",
+  "title": "Anne of green Gables classic starts",
+  "lexile": 970,
+  "guided_level": "W",
+  "tags": []
+ },
+ {
+  "id": "b124",
+  "title": "Lily to the Rescue",
+  "lexile": 770,
+  "guided_level": "R",
+  "tags": [
+   "adventure"
+  ]
+ },
+ {
+  "id": "b125",
+  "title": "Little League Play Ball!",
+  "lexile": 700,
+  "guided_level": "Q",
+  "tags": [
+   "sports"
+  ]
+ },
+ {
+  "id": "b126",
+  "title": "Butterfly jar jeff moss",
+  "lexile": 500,
+  "guided_level": "N",
+  "tags": [
+   "animals"
+  ]
+ },
+ {
+  "id": "b127",
+  "title": "Elmer and the Talent Show",
+  "lexile": 810,
+  "guided_level": "S",
+  "tags": []
+ },
+ {
+  "id": "b128",
+  "title": "Spring According to Humphrey",
+  "lexile": 570,
+  "guided_level": "N",
+  "tags": [
+   "science"
+  ]
+ },
+ {
+  "id": "b129",
+  "title": "Diary of a Wimpy Kid: Old School",
+  "lexile": 1020,
+  "guided_level": "X",
+  "tags": [
+   "community",
+   "humor"
+  ]
+ },
+ {
+  "id": "b130",
+  "title": "Diary of a Wimpy Kid",
+  "lexile": 950,
+  "guided_level": "W",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b131",
+  "title": "Ivy",
+  "lexile": 620,
+  "guided_level": "O",
+  "tags": []
+ },
+ {
+  "id": "b132",
+  "title": "The Case of the Library Monster",
+  "lexile": 590,
+  "guided_level": "O",
+  "tags": [
+   "mystery"
+  ]
+ },
+ {
+  "id": "b133",
+  "title": "Night Of The Living Things",
+  "lexile": 670,
+  "guided_level": "P",
+  "tags": []
+ },
+ {
+  "id": "b134",
+  "title": "galaxy zack game over",
+  "lexile": 650,
+  "guided_level": "P",
+  "tags": [
+   "adventure"
+  ]
+ },
+ {
+  "id": "b135",
+  "title": "Didi Dodo, Future Spy: Robo-Dodo Rumble",
+  "lexile": 680,
+  "guided_level": "P",
+  "tags": [
+   "animals",
+   "mystery"
+  ]
+ },
+ {
+  "id": "b136",
+  "title": "Goldie Blox and the Best Friend Fail!",
+  "lexile": 500,
+  "guided_level": "N",
+  "tags": []
+ },
+ {
+  "id": "b137",
+  "title": "Firefly Hollow",
+  "lexile": 690,
+  "guided_level": "P",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b138",
+  "title": "The BFG",
+  "lexile": 720,
+  "guided_level": "Q",
+  "tags": [
+   "fantasy"
+  ]
+ },
+ {
+  "id": "b139",
+  "title": "Jacky Ha-Ha: My Life Is A Joke",
+  "lexile": 650,
+  "guided_level": "P",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b140",
+  "title": "Jacky Ha-Ha",
+  "lexile": 650,
+  "guided_level": "P",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b141",
+  "title": "Junie B., First Grader Shipwrecked",
+  "lexile": 560,
+  "guided_level": "N",
+  "tags": [
+   "adventure",
+   "humor"
+  ]
+ },
+ {
+  "id": "b142",
+  "title": "Tales From A Not-So-Talented Pop Star",
+  "lexile": 770,
+  "guided_level": "R",
+  "tags": []
+ },
+ {
+  "id": "b143",
+  "title": "Wednesday Wilson Gets Down to Business",
+  "lexile": 820,
+  "guided_level": "S",
+  "tags": []
+ },
+ {
+  "id": "b144",
+  "title": "Minnie and Moo and the Haunted Sweater",
+  "lexile": 440,
+  "guided_level": "L",
+  "tags": [
+   "animals",
+   "mystery"
+  ]
+ },
+ {
+  "id": "b145",
+  "title": "Junie B. Jones Is a Party Animal",
+  "lexile": 530,
+  "guided_level": "N",
+  "tags": [
+   "animals",
+   "humor"
+  ]
+ },
+ {
+  "id": "b146",
+  "title": "Boss of Lunch",
+  "lexile": 540,
+  "guided_level": "N",
+  "tags": [
+   "community"
+  ]
+ },
+ {
+  "id": "b147",
+  "title": "Junie B. Jones Has a Peep in Her Pocket",
+  "lexile": 560,
+  "guided_level": "N",
+  "tags": [
+   "humor"
+  ]
+ },
+ {
+  "id": "b148",
+  "title": "Junie B. Jones and the Yucky Blucky Fruitcake",
+  "lexile": 490,
+  "guided_level": "M",
+  "tags": [
+   "humor"
+  ]
+ }
+]

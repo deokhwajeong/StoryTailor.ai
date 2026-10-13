@@ -1,1 +1,0 @@
-"""StoryTailor.ai Backend Application"""

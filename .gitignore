@@ -50,3 +50,7 @@ chroma_data/
 Thumbs.db
 node_modules
 dist
+
+# Local data
+instance/
+*.sqlite

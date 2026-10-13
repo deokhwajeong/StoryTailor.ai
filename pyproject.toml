@@ -1,0 +1,10 @@
+[project]
+name = "storytailor"
+version = "2.0.0"
+description = "Personalized, privacy-first reading platform for elementary classrooms (Flask + OpenAI API)"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
