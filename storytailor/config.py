@@ -16,10 +16,6 @@ class Config:
     LLM_PROVIDER = os.getenv("STORYTAILOR_LLM_PROVIDER", "openai")
     OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
-    # If a generated story reads this far above the student's target level,
-    # it is regenerated once with a simplification instruction.
-    LEVEL_TOLERANCE = int(os.getenv("STORYTAILOR_LEVEL_TOLERANCE", "150"))
-
     ALLOWED_ORIGINS = [
         o.strip()
         for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")

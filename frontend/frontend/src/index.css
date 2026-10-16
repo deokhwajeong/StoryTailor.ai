@@ -2,17 +2,37 @@
    the app, including the static demo, makes no third-party font requests. */
 @import "tailwindcss";
 
+/* One calm palette: warm paper, dark ink, and a single deep teal accent.
+   Every text and background pair below meets WCAG AA (most reach AAA).
+   "clay" and "slate" are used only for small status labels, never as accents. */
 @theme {
   --font-sans: 'Atkinson Hyperlegible', system-ui, sans-serif;
+  --font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+
+  --color-paper: #f6f1e7;
+  --color-sheet: #fffdf8;
+  --color-rule: #e3dacb;
+  --color-ink: #26221e;
+  --color-ink-soft: #4a433c;
+  --color-ink-muted: #6a6158;
+  --color-accent: #1f5e59;
+  --color-accent-strong: #174a46;
+  --color-accent-soft: #e6f0ed;
+  --color-clay: #8a3b12;
+  --color-clay-soft: #fbede4;
+  --color-slate: #2b4a75;
+  --color-slate-soft: #e9eef6;
 }
 
 body {
   font-family: var(--font-sans);
+  background: var(--color-paper);
+  color: var(--color-ink);
 }
 
 /* One visible focus style for every interactive element, keyboard only. */
 :focus-visible {
-  outline: 3px solid #1d4ed8;
+  outline: 3px solid var(--color-accent);
   outline-offset: 2px;
 }
 

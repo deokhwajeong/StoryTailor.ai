@@ -59,4 +59,5 @@ def test_feedback_summary_lists_students_needing_attention(client, teacher, clas
         client.post(f"/api/stories/{sid}/feedback", json={"difficulty": "too_hard"}, headers=student["headers"])
     summary = client.get(f"/api/classrooms/{classroom['id']}/feedback-summary", headers=teacher).get_json()
     assert summary["needs_attention"] == [
-        {"student_id": student["id"], "target_level": 350, "reasons": ["struggling"]}]
+        {"student_id": student["id"], "target_level": 350, "reasons": ["struggling"],
+         "recent_votes": ["too_hard", "too_hard"]}]

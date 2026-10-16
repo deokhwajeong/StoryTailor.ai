@@ -49,7 +49,8 @@ def attention_reasons(*, grade: int, target_level: int, recent_votes: list[str],
 def needs_attention(students: list[dict], now: datetime) -> list[dict]:
     """students: dicts with id, grade, target_level, recent_votes, flags, last_active_at.
 
-    Returns only students with at least one reason, most reasons first, then
+    Returns only students with at least one reason (with their recent votes so
+    the teacher sees the evidence, newest first), most reasons first, then
     by urgency of their top reason, then by id for a stable order.
     """
     out = []
@@ -59,6 +60,7 @@ def needs_attention(students: list[dict], now: datetime) -> list[dict]:
             flags=s["flags"], last_active_at=s["last_active_at"], now=now,
         )
         if reasons:
-            out.append({"student_id": s["id"], "target_level": s["target_level"], "reasons": reasons})
+            out.append({"student_id": s["id"], "target_level": s["target_level"], "reasons": reasons,
+                        "recent_votes": s["recent_votes"][:RECENT_VOTES]})
     out.sort(key=lambda r: (-len(r["reasons"]), REASONS.index(r["reasons"][0]), r["student_id"]))
     return out

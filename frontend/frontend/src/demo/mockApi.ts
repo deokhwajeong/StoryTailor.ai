@@ -1,18 +1,20 @@
 // In-browser stand-in for the Flask API, used only in demo builds (VITE_DEMO=1).
 //
 // It mirrors the server logic closely enough to show the real product loop:
-// PII redaction and the topic safety check, picking the story version that best
-// fits the reader's target level, the feedback rule that moves that target by
-// 50L, and leveled library recommendations from the real classroom catalog.
-// Stories are pre-written samples (three leveled versions per topic, measured
-// with the same Flesch-Kincaid mapping the server uses). Nothing is sent over
-// the network and nothing is persisted: reloading the page resets the demo.
+// PII redaction and the topic safety check, the level check that rejects a draft
+// outside the reader's band and regenerates it, the feedback rule that moves the
+// target by 50L, and leveled library recommendations from the real classroom
+// catalog. Every story comes with the same "how this story was made" trace the
+// server returns. Stories are pre-written samples (three leveled drafts per
+// topic, measured ahead of time with the server's own readability function;
+// tests/test_demo_parity.py re-measures them). Nothing is sent over the network
+// and nothing is persisted: reloading the page resets the demo.
 
 import catalog from '../../../../storytailor/data/books.json';
 import knowledge from '../../../../storytailor/data/knowledge.json';
 import samples from './stories.json';
 import { DEMO_CLASS_NAME, demoRoster, demoSummary, type ReaderState } from './teacherData';
-import type { Difficulty } from '../types';
+import type { Difficulty, LevelFit, LibraryCoverage, Story, TraceDraft, TraceStep } from '../types';
 
 interface CatalogBook {
   id: string;
@@ -25,6 +27,8 @@ interface CatalogBook {
 interface SampleVersion {
   text: string;
   measured_level: number;
+  fk_grade: number;
+  words: number;
 }
 
 interface Sample {
@@ -47,6 +51,11 @@ const LEVEL_MAX = 1300;
 const RECENT_VOTES = 5;
 const BAND_BELOW = 100;
 const BAND_ABOVE = 50;
+const MAX_ATTEMPTS = 2;
+const EXCERPT_CHARS = 160;
+const STORY_BOOKS = 3;
+const COVERAGE_BAND = 100;
+const THIN_SHELF = 10;
 
 // A fictional grade 3 reader. Grade 3 starts at 600L on the server too.
 const profile = {
@@ -123,12 +132,73 @@ function pickSample(topic: string, goal: string): Sample {
   return pool[hash(topic.toLowerCase()) % pool.length];
 }
 
-// The server measures each draft and retries once if it reads above target.
-// Here every topic has three pre-measured drafts, so take the closest fit.
-function pickVersion(sample: Sample): SampleVersion {
-  return Object.values(sample.versions).reduce((best, v) =>
-    Math.abs(v.measured_level - profile.targetLevel) < Math.abs(best.measured_level - profile.targetLevel) ? v : best,
-  );
+// Port of level_band() and level_fit() in storytailor/personalization.py.
+function levelBand(target: number): [number, number] {
+  return [target - BAND_BELOW, target + BAND_ABOVE];
+}
+
+function levelFit(measured: number, band: [number, number]): LevelFit {
+  if (measured > band[1]) return 'too_hard';
+  if (measured < band[0]) return 'too_easy';
+  return 'in_band';
+}
+
+function excerpt(text: string, limit = EXCERPT_CHARS): string {
+  const flat = text.split(/\s+/).filter(Boolean).join(' ');
+  if (flat.length <= limit) return flat;
+  const cut = flat.slice(0, limit);
+  return cut.slice(0, cut.lastIndexOf(' ')) + '...';
+}
+
+// Stand-in for the model. A model asked for a level usually overshoots, so the
+// first "draft" is the sample one step harder than the best fit (when there is
+// one). A regeneration asked to simplify or enrich returns the closest-fitting
+// remaining sample in that direction. The accept / reject rule applied to these
+// drafts is the server's, unchanged.
+function draftSequence(sample: Sample): SampleVersion[] {
+  const target = profile.targetLevel;
+  const band = levelBand(target);
+  const ordered = Object.values(sample.versions).sort((a, b) => a.measured_level - b.measured_level);
+  const distance = (v: SampleVersion) => Math.abs(v.measured_level - target);
+  const best = ordered.reduce((b, v) => (distance(v) < distance(b) ? v : b));
+  const first = ordered[Math.min(ordered.indexOf(best) + 1, ordered.length - 1)];
+  const drafts = [first];
+  while (drafts.length < MAX_ATTEMPTS) {
+    const last = drafts[drafts.length - 1];
+    const fit = levelFit(last.measured_level, band);
+    if (fit === 'in_band') break;
+    const remaining = ordered.filter(v => !drafts.includes(v));
+    const wanted = remaining.filter(v => (fit === 'too_hard' ? v.measured_level < last.measured_level : v.measured_level > last.measured_level));
+    const pool = wanted.length > 0 ? wanted : remaining;
+    drafts.push(pool.reduce((b, v) => (distance(v) < distance(b) ? v : b)));
+  }
+  return drafts;
+}
+
+// Port of titles_between() and class_coverage() in storytailor/books.py.
+function titlesBetween(low: number, high: number): number {
+  return BOOKS.filter(b => b.lexile >= low && b.lexile <= high).length;
+}
+
+function classCoverage(levels: number[]): LibraryCoverage {
+  const lexiles = BOOKS.map(b => b.lexile);
+  const all = [...lexiles, ...levels];
+  const first = Math.floor(Math.min(...all) / COVERAGE_BAND) * COVERAGE_BAND;
+  const last = Math.floor(Math.max(...all) / COVERAGE_BAND) * COVERAGE_BAND;
+  const bands = [];
+  for (let low = first; low <= last; low += COVERAGE_BAND) {
+    const high = low + COVERAGE_BAND - 1;
+    const titles = lexiles.filter(x => x >= low && x <= high).length;
+    const readers = levels.filter(x => x >= low && x <= high).length;
+    bands.push({ low, high, titles, readers, thin: titles < THIN_SHELF });
+  }
+  return {
+    band_width: COVERAGE_BAND,
+    thin_threshold: THIN_SHELF,
+    total_titles: lexiles.length,
+    bands,
+    readers_in_thin_bands: bands.filter(b => b.thin).reduce((a, b) => a + b.readers, 0),
+  };
 }
 
 // Port of adjust_level() in storytailor/personalization.py.
@@ -168,26 +238,75 @@ function recommend(k = 5) {
     }));
 }
 
-function createStory(body: { topic?: string; learning_goal?: string }) {
+function createStory(body: { topic?: string; learning_goal?: string }): Story {
   const [topic, topicPii] = redact(String(body.topic ?? '').trim().slice(0, 120));
   const [goal, goalPii] = redact(String(body.learning_goal ?? '').trim().slice(0, 120));
   if (!topic) throw new DemoApiError('topic is required.');
   const hits = blockedTerms(`${topic} ${goal}`);
   if (hits.length > 0) throw new DemoApiError(`Topic not allowed for this classroom: ${hits.join(', ')}`);
 
+  const redacted = [...new Set([...topicPii, ...goalPii])].sort();
   const sample = pickSample(topic, goal);
-  const version = pickVersion(sample);
+  const target = profile.targetLevel;
+  const band = levelBand(target);
+  const sources = sample.sources.map(sid => ({ id: sid, source: SOURCE_LABELS.get(sid) ?? 'curated' }));
+
+  // Same loop as generate_story(): stop at the first draft in the band; if none
+  // fits, keep the one closest to the target.
+  const drafts = draftSequence(sample).map((v, i, all) => ({
+    v,
+    attempt: i + 1,
+    instruction: i === 0 ? null : levelFit(all[i - 1].measured_level, band) === 'too_hard' ? 'simplify' as const : 'enrich' as const,
+    fit: levelFit(v.measured_level, band),
+  }));
+  const kept = drafts.find(d => d.fit === 'in_band')
+    ?? drafts.reduce((b, d) => (Math.abs(d.v.measured_level - target) < Math.abs(b.v.measured_level - target) ? d : b));
+  const draftSteps: TraceDraft[] = drafts.map(d => ({
+    step: 'draft',
+    status: d === kept ? 'accepted' : 'rejected',
+    attempt: d.attempt,
+    instruction: d.instruction,
+    measured_level: d.v.measured_level,
+    fk_grade: d.v.fk_grade,
+    words: d.v.words,
+    band,
+    fit: d.fit,
+    excerpt: excerpt(d.v.text),
+  }));
+  if (blockedTerms(kept.v.text).length > 0) {
+    throw new DemoApiError('Generated story did not pass the safety check. Please try another topic.');
+  }
+  const books = recommend(STORY_BOOKS);
+  const shelfTitles = titlesBetween(band[0], band[1]);
+  const trace: TraceStep[] = [
+    { step: 'shelf', status: shelfTitles < THIN_SHELF ? 'thin' : 'ok', band, titles: shelfTitles, thin_threshold: THIN_SHELF },
+    { step: 'redaction', status: redacted.length > 0 ? 'removed' : 'clean', kinds: redacted, topic, learning_goal: goal || null },
+    { step: 'topic_check', status: 'passed', word_list_size: BLOCKED_TERMS.length },
+    { step: 'grounding', status: sources.length > 0 ? 'found' : 'none', facts: sources },
+    ...draftSteps,
+    // The demo has no moderation service, like the server's offline provider.
+    { step: 'moderation', status: 'passed', checks: [
+      { name: 'word_list', result: 'passed' },
+      { name: 'moderation_service', result: 'not_run' },
+    ] },
+    { step: 'library', status: books.length > 0 ? 'found' : 'none', band,
+      books: books.map(b => ({ id: b.id, title: b.title, lexile: b.lexile, guided_level: b.guided_level })) },
+  ];
+
   const id = nextStoryId++;
   stories.set(id, { id, topic, sampleKey: sample.key });
   return {
     id,
     topic,
-    text: version.text,
-    target_level: profile.targetLevel,
-    measured_level: version.measured_level,
-    sources: sample.sources.map(sid => ({ id: sid, source: SOURCE_LABELS.get(sid) ?? 'curated' })),
-    attempts: 1,
-    redacted: [...new Set([...topicPii, ...goalPii])].sort(),
+    text: kept.v.text,
+    target_level: target,
+    measured_level: kept.v.measured_level,
+    band,
+    fit: kept.fit,
+    sources,
+    attempts: drafts.length,
+    redacted,
+    trace,
   };
 }
 
@@ -229,7 +348,9 @@ function teacherRequest(path: string, token: string) {
   const m = path.match(/^\/api\/classrooms\/(\d+)\/(students|feedback-summary)$/);
   if (!m) throw new DemoApiError('This action is not available in the demo.');
   if (m[1] !== '1') throw new DemoApiError('Classroom not found.');
-  return m[2] === 'students' ? demoRoster(readerState()) : { classroom: DEMO_CLASS_NAME, ...demoSummary(readerState()) };
+  if (m[2] === 'students') return demoRoster(readerState());
+  const levels = demoRoster(readerState()).map(s => s.target_level);
+  return { classroom: DEMO_CLASS_NAME, ...demoSummary(readerState()), library_coverage: classCoverage(levels) };
 }
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));

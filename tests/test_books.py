@@ -107,3 +107,41 @@ def test_load_synthetic_file_drops_names(app, tmp_path):
 def test_load_refuses_non_synthetic(app, tmp_path):
     with app.app_context(), pytest.raises(demo.NotSynthetic):
         demo.load_file(_synthetic_file(tmp_path, synthetic=False), tmp_path / "codes.csv")
+
+
+def test_catalog_coverage_facts_quoted_in_readme():
+    lexiles = [b["lexile"] for b in books.catalog()]
+    assert len(lexiles) == 148
+    assert sum(500 <= x <= 699 for x in lexiles) == 80
+    assert sum(x < 400 for x in lexiles) == 7
+    assert sum(x >= 900 for x in lexiles) == 13
+
+
+def test_class_coverage_counts_titles_and_readers_per_band():
+    cov = books.class_coverage([350, 380, 560, 610, 920])
+    by_low = {b["low"]: b for b in cov["bands"]}
+    assert sum(b["titles"] for b in cov["bands"]) == cov["total_titles"] == 148
+    assert by_low[500]["titles"] == 43 and by_low[600]["titles"] == 37
+    assert by_low[300] == {"low": 300, "high": 399, "titles": 4, "readers": 2, "thin": True}
+    assert by_low[900]["readers"] == 1 and by_low[900]["thin"]
+    assert cov["readers_in_thin_bands"] == 3
+    assert cov["thin_threshold"] == books.THIN_SHELF
+
+
+def test_class_coverage_includes_readers_beyond_the_shelf():
+    cov = books.class_coverage([1350])
+    assert cov["bands"][-1] == {"low": 1300, "high": 1399, "titles": 0, "readers": 1, "thin": True}
+
+
+def test_shelf_for_reader_uses_the_recommendation_band():
+    shelf = books.shelf_for_reader(600)
+    assert shelf["band"] == [500, 650]
+    assert shelf["titles"] == books.titles_between(500, 650) and not shelf["thin"]
+    assert books.shelf_for_reader(300)["thin"]
+
+
+def test_feedback_summary_includes_library_coverage(client, teacher, classroom, student):
+    summary = client.get(f"/api/classrooms/{classroom['id']}/feedback-summary", headers=teacher).get_json()
+    cov = summary["library_coverage"]
+    assert cov["total_titles"] == 148
+    assert sum(b["readers"] for b in cov["bands"]) == 1

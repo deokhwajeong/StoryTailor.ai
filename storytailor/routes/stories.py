@@ -2,8 +2,9 @@
 
 import json
 
-from flask import Blueprint, abort, current_app, g, jsonify, request
+from flask import Blueprint, abort, g, jsonify, request
 
+from .. import books
 from ..auth import student_required, teacher_owns_student, teacher_required
 from ..db import get_db, loads, utcnow
 from ..llm import get_provider
@@ -15,6 +16,8 @@ bp = Blueprint("stories", __name__, url_prefix="/api/stories")
 DIFFICULTY = {"too_easy", "just_right", "too_hard"}
 FLAGS = {"inappropriate", "inaccurate", "off_topic"}
 RECENT_VOTES = 5
+# Library books shown with each story, from the same band as the story check.
+STORY_BOOKS = 3
 
 
 def _profile(row) -> Profile:
@@ -30,10 +33,7 @@ def create_story():
     if not topic:
         abort(400, "topic is required.")
     try:
-        result = generate_story(
-            get_provider(), _profile(g.student), topic, goal or None,
-            current_app.config["LEVEL_TOLERANCE"],
-        )
+        result = generate_story(get_provider(), _profile(g.student), topic, goal or None)
     except UnsafeRequest as e:
         abort(422, str(e))
     db = get_db()
@@ -45,9 +45,22 @@ def create_story():
     )
     if topic_pii or goal_pii:
         audit(g.actor, "redacted_input", g.student["id"], ",".join(sorted(set(topic_pii + goal_pii))))
+    redacted = sorted(set(topic_pii + goal_pii))
+    read = {r["book_id"] for r in db.execute(
+        "SELECT book_id FROM reading_log WHERE student_id = ?", (g.student["id"],))}
+    matches = books.recommend(result["target_level"], loads(g.student["interests"]), read, k=STORY_BOOKS)
+    shelf = books.shelf_for_reader(result["target_level"])
+    result["trace"] = [
+        {"step": "shelf", "status": "thin" if shelf["thin"] else "ok", "band": shelf["band"],
+         "titles": shelf["titles"], "thin_threshold": books.THIN_SHELF},
+        {"step": "redaction", "status": "removed" if redacted else "clean", "kinds": redacted,
+         "topic": topic, "learning_goal": goal or None},
+        *result["trace"],
+        {"step": "library", "status": "found" if matches else "none", "band": result["band"],
+         "books": [{k: b[k] for k in ("id", "title", "lexile", "guided_level")} for b in matches]},
+    ]
     db.commit()
-    return jsonify({"id": cur.lastrowid, "topic": topic, **result,
-                    "redacted": sorted(set(topic_pii + goal_pii))}), 201
+    return jsonify({"id": cur.lastrowid, "topic": topic, **result, "redacted": redacted}), 201
 
 
 @bp.get("")

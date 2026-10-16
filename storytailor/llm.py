@@ -16,6 +16,9 @@ class StoryProvider(Protocol):
 
 
 class OpenAIProvider:
+    # Stories are also checked by the provider's moderation endpoint.
+    moderation_service = True
+
     def __init__(self, model: str):
         from openai import OpenAI
 
@@ -39,7 +42,12 @@ class OpenAIProvider:
 
 
 class OfflineProvider:
-    """Deterministic template generator for demos, tests, and air-gapped classrooms."""
+    """Deterministic template generator for demos, tests, and air-gapped classrooms.
+
+    Only the local word list checks its output; there is no moderation service.
+    """
+
+    moderation_service = False
 
     def generate(self, system: str, user: str) -> str:
         fields = dict(
@@ -50,9 +58,10 @@ class OfflineProvider:
         simple = "SIMPLIFY" in user
         if simple:
             return (
-                f"Mia liked {topic}. One day she had a problem. "
-                f"She asked a friend for help. They tried again. "
-                f"It worked! Mia learned to {goal}."
+                f"Mia wanted to learn about {topic}. On Saturday she went to the library with her friend Leo. "
+                f"They found a book with big pictures. They read it by the window. "
+                f"When a word was long, they took turns and sounded it out. "
+                f"At the end of the day Mia had three pages of notes. Now she knew how to {goal}."
             )
         return (
             f"Mia had always wondered about {topic}. On Saturday morning she packed a notebook "

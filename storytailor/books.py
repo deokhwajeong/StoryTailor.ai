@@ -13,6 +13,11 @@ from pathlib import Path
 
 # MetaMetrics' suggested reading range: 100L below to 50L above the reader.
 BAND_BELOW, BAND_ABOVE = 100, 50
+# Shelf coverage: titles are counted per 100L band, and a band (or a reader's
+# own range) with fewer than THIN_SHELF titles is called thin. Most of the
+# catalog sits in 500 to 699L, so readers at the edges have few real books.
+COVERAGE_BAND = 100
+THIN_SHELF = 10
 
 
 @lru_cache(maxsize=1)
@@ -83,3 +88,38 @@ def recommend(target_level: int, interests: list[str], already_read: set[str], k
         b | {"interest_matches": sorted(interests & set(b["tags"])), "lexile_difference": b["lexile"] - target_level}
         for b in ranked[:k]
     ]
+
+
+def titles_between(low: int, high: int) -> int:
+    """Number of catalog titles with low <= Lexile <= high."""
+    return sum(1 for b in catalog() if low <= b["lexile"] <= high)
+
+
+def shelf_for_reader(target_level: int) -> dict:
+    """How many real books sit in this reader's band, and whether that is thin."""
+    low, high = target_level - BAND_BELOW, target_level + BAND_ABOVE
+    titles = titles_between(low, high)
+    return {"band": [low, high], "titles": titles, "thin": titles < THIN_SHELF}
+
+
+def class_coverage(levels: list[int]) -> dict:
+    """Titles per 100L band across the whole catalog, with how many of the given
+    readers (target levels) fall in each band. Bands span the catalog and the
+    readers, so a reader beyond the shelf still shows up in an empty band."""
+    lexiles = [b["lexile"] for b in catalog()]
+    first = min(lexiles + levels) // COVERAGE_BAND * COVERAGE_BAND
+    last = max(lexiles + levels) // COVERAGE_BAND * COVERAGE_BAND
+    bands = []
+    for low in range(first, last + 1, COVERAGE_BAND):
+        high = low + COVERAGE_BAND - 1
+        titles = sum(1 for x in lexiles if low <= x <= high)
+        readers = sum(1 for x in levels if low <= x <= high)
+        bands.append({"low": low, "high": high, "titles": titles, "readers": readers,
+                      "thin": titles < THIN_SHELF})
+    return {
+        "band_width": COVERAGE_BAND,
+        "thin_threshold": THIN_SHELF,
+        "total_titles": len(lexiles),
+        "bands": bands,
+        "readers_in_thin_bands": sum(b["readers"] for b in bands if b["thin"]),
+    }

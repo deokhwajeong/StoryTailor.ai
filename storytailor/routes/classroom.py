@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 
 from flask import Blueprint, abort, g, jsonify, request
 
+from .. import books
 from ..auth import teacher_owns_classroom, teacher_required
 from ..db import get_db, loads, utcnow
 from ..insights import RECENT_VOTES, needs_attention
@@ -114,4 +115,5 @@ def feedback_summary(classroom_id):
         "rating": {"average": round(rating["avg"], 2) if rating["avg"] else None, "count": rating["n"]},
         "flags": [dict(r) for r in flags],
         "levels": dict(levels),
+        "library_coverage": books.class_coverage([s["target_level"] for s in students]),
     })

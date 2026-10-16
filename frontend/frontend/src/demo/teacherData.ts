@@ -106,9 +106,34 @@ export interface ReaderState {
   booksRead: number;
 }
 
+// A grade 3 class usually has a few readers well outside the usual range. These
+// fictional edge readers (two emerging, one advanced) sit where the classroom
+// shelf is thin, which is the gap generated stories are meant to fill.
+function edgeReaders(now: number): SyntheticStudent[] {
+  const rand = prng(1148);
+  const make = (level: number, votes: Difficulty[]): SyntheticStudent => ({
+    id: 'stu_' + Array.from({ length: 12 }, () => '0123456789abcdef'[Math.floor(rand() * 16)]).join(''),
+    grade: GRADE,
+    target_level: level,
+    interests: ['animals'],
+    consent_status: 'school_authorized',
+    last_active_at: daysAgo(1 + Math.floor(rand() * 4), now),
+    stories: votes.length + 1,
+    recent_votes: votes,
+    flags: 0,
+    minutes: 40,
+    sessions: 3,
+  });
+  return [
+    make(340, ['just_right', 'too_hard', 'just_right']),
+    make(380, ['just_right', 'just_right']),
+    make(930, ['too_easy', 'just_right', 'too_easy']),
+  ];
+}
+
 // Generated once per page load so "last active" stays relative to today.
 const loadedAt = Date.now();
-const CLASS = syntheticClass(loadedAt);
+const CLASS = [...syntheticClass(loadedAt), ...edgeReaders(loadedAt)];
 
 function withReader(reader: ReaderState): SyntheticStudent[] {
   return [
@@ -141,13 +166,13 @@ export function demoRoster(reader: ReaderState): RosterStudent[] {
   }));
 }
 
-export function demoSummary(reader: ReaderState): TeacherSummary {
+export function demoSummary(reader: ReaderState): Omit<TeacherSummary, 'library_coverage'> {
   const students = withReader(reader);
   const levels = students.map(s => s.target_level);
   const difficulty = { too_easy: 0, just_right: 0, too_hard: 0 };
   for (const v of [...CLASS.flatMap(s => s.recent_votes), ...reader.allVotes]) difficulty[v] += 1;
   const needs = students
-    .map(s => ({ student_id: s.id, target_level: s.target_level, reasons: attentionReasons(s, loadedAt) }))
+    .map(s => ({ student_id: s.id, target_level: s.target_level, reasons: attentionReasons(s, loadedAt), recent_votes: s.recent_votes.slice(0, RECENT_VOTES) }))
     .filter(r => r.reasons.length > 0)
     .sort((a, b) =>
       b.reasons.length - a.reasons.length
