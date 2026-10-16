@@ -29,8 +29,8 @@ npm run dev:demo                                            # same mock, with ho
 
 ## Background
 
-StoryTailor grew out of a 2026 pilot with one elementary classroom in the
-Cupertino Union School District. Through weekly volunteer visits, the
+StoryTailor grew out of a 2026 pilot with one elementary classroom.
+Through weekly volunteer visits, the
 classroom's book list was collected and cataloged (148 titles with Lexile and
 guided reading levels), a digital library search was built for the class,
 and students' reading was checked in person each week.
