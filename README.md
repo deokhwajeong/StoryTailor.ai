@@ -7,6 +7,10 @@ minimal, pseudonymous, and under the school's control.
 
 Python · Flask · OpenAI API · SQLite · React + Vite
 
+<p align="center"><img src="docs/images/student-view.png" alt="Student view: a leveled story, library books in the reader's band, and one-tap difficulty feedback" width="560"></p>
+
+<p align="center"><sub>Student view with synthetic demo data and the offline story generator.</sub></p>
+
 ## Background
 
 StoryTailor grew out of a 2026 pilot with one elementary classroom in the
