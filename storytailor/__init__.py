@@ -79,7 +79,7 @@ def _register_cli(app: Flask) -> None:
         try:
             result = demo.load_file(Path(from_file), out) if from_file else demo.generate(out, seed=seed)
         except demo.NotSynthetic as e:
-            raise click.ClickException(str(e))
+            raise click.ClickException(str(e)) from e
         token = result.pop("teacher_token")
         click.echo(f"Seeded demo data: {result}")
         click.echo(f"Demo teacher token: {token}")

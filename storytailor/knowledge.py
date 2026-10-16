@@ -41,7 +41,7 @@ class KnowledgeBase:
     def search(self, query: str, k: int = 3) -> list[dict]:
         q = tokenize(query)
         scored = []
-        for doc, toks in zip(self.docs, self.doc_tokens):
+        for doc, toks in zip(self.docs, self.doc_tokens, strict=True):
             tf = Counter(toks)
             score = 0.0
             for t in q:

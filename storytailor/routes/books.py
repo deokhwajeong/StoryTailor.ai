@@ -53,7 +53,8 @@ def log_reading():
         abort(400, "rating must be 1-5.")
     db = get_db()
     db.execute(
-        "INSERT INTO reading_log (student_id, book_id, minutes, completed, rating, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+        "INSERT INTO reading_log (student_id, book_id, minutes, completed, rating, created_at) "
+        "VALUES (?, ?, ?, ?, ?, ?)",
         (g.student["id"], book_id, minutes, int(bool(data.get("completed", True))), rating, utcnow()),
     )
     db.commit()

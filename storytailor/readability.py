@@ -39,7 +39,7 @@ def fk_grade(text: str) -> tuple[float, int, int]:
 def grade_to_level(grade: float) -> int:
     if grade <= _GRADE_TO_LEVEL[0][0]:
         return _GRADE_TO_LEVEL[0][1]
-    for (g0, l0), (g1, l1) in zip(_GRADE_TO_LEVEL, _GRADE_TO_LEVEL[1:]):
+    for (g0, l0), (g1, l1) in zip(_GRADE_TO_LEVEL, _GRADE_TO_LEVEL[1:], strict=False):
         if grade <= g1:
             return round(l0 + (l1 - l0) * (grade - g0) / (g1 - g0))
     return _GRADE_TO_LEVEL[-1][1]

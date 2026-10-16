@@ -10,7 +10,8 @@ def test_generate_story_is_grounded_and_leveled(client, student):
 
 
 def test_invalid_code_rejected(client):
-    assert client.post("/api/stories", json={"topic": "owls"}, headers={"X-Student-Code": "NOPE1234"}).status_code == 401
+    resp = client.post("/api/stories", json={"topic": "owls"}, headers={"X-Student-Code": "NOPE1234"})
+    assert resp.status_code == 401
 
 
 def test_unsafe_topic_rejected(client, student):

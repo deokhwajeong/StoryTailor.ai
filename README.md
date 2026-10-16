@@ -1,5 +1,9 @@
 # StoryTailor
 
+[![CI](https://github.com/deokhwajeong/storytailor.ai/actions/workflows/ci.yml/badge.svg)](https://github.com/deokhwajeong/storytailor.ai/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/demo-live-be185d)](https://deokhwajeong.github.io/demos/storytailor/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
 **A personalized reading platform for elementary classrooms.** Students get short,
 original stories pitched at their own reading level and built around what they
 care about. Teachers see how the class is responding. Student data stays
@@ -7,20 +11,29 @@ minimal, pseudonymous, and under the school's control.
 
 Python · Flask · OpenAI API · SQLite · React + Vite
 
-<p align="center"><img src="docs/images/student-view.png" alt="Student view: a leveled story, library books in the reader's band, and one-tap difficulty feedback" width="560"></p>
+<p align="center">
+  <img src="docs/images/student-view.png" alt="Student view: a leveled story, library books in the reader's band, and one-tap difficulty feedback" width="300">
+  <img src="docs/images/teacher-view.png" alt="Teacher view: class stats, students who may need a check-in with reasons, difficulty fit, level spread, and a pseudonymous roster" width="440">
+</p>
 
-<p align="center"><sub>Student view with synthetic demo data and the offline story generator.</sub></p>
+<p align="center"><sub>Student and teacher views from the static demo: sample stories and a fictional, seeded class.</sub></p>
 
 ## Live demo
 
 **[Try it in your browser](https://deokhwajeong.github.io/demos/storytailor/)**: the real
-student UI with no server and no API key. In the demo build, API calls are answered by an
+student UI and a teacher view, with no server and no API key. In the demo build, API calls are answered by an
 in-browser mock (`frontend/frontend/src/demo/`) that mirrors the server logic: PII
 redaction and the topic safety check, picking the story draft closest to the reader's
 target level, the feedback rule that moves the target by 50L, and leveled recommendations
 from the real classroom catalog. Stories are pre-written samples, three leveled drafts per
 topic, measured with the same readability formula the server uses. The reader is a
 fictional grade 3 student, and nothing is sent or stored; reloading resets the demo.
+
+The **Teacher** tab shows a fictional, seeded grade 3 class (pseudonyms only) with the demo
+reader included: level spread, difficulty fit, a roster, and "who may need a check-in"
+computed by a port of `storytailor/insights.py`. Vote "too hard" twice in the Student tab
+and the reader shows up there with the reason. The font is bundled with the build, so the
+page makes no third-party requests (CI checks the build for external URLs).
 
 ```bash
 cd frontend/frontend && npm install && npm run build:demo   # static site in dist-demo/
@@ -49,6 +62,34 @@ No student data from the pilot is included in this repository. The demo
 classrooms described below are synthetic and are not pilot results.
 
 ## How it works
+
+```mermaid
+flowchart LR
+  subgraph Browser
+    S[Student view]
+    T[Teacher view]
+  end
+  subgraph Flask API
+    P[privacy.py<br/>PII redaction, audit]
+    Z[safety.py<br/>blocklist + moderation]
+    K[knowledge.py<br/>BM25 facts]
+    G[personalization.py<br/>prompt, measure, retry once]
+    R[readability.py<br/>FK grade to level]
+    I[insights.py<br/>check-in rules]
+    B[books.py<br/>leveled library]
+  end
+  LLM[(Model provider<br/>store=False, no student id)]
+  DB[(SQLite<br/>pseudonyms only)]
+  S -->|topic| P --> Z --> K --> G
+  G <--> LLM
+  G --> R
+  G --> DB
+  S -->|difficulty votes| DB
+  DB --> I --> T
+  B --> S
+```
+
+Request path for one story, step by step:
 
 ```
  student types a topic
@@ -106,12 +147,13 @@ not been re-verified. Topic tags are keyword guesses from titles.
 | `storytailor/privacy.py` | PII redaction, pseudonyms, keyed hashing, export, delete, retention purge, audit |
 | `storytailor/knowledge.py` | BM25 retrieval over `data/knowledge.json` so real-world facts in stories are grounded |
 | `storytailor/books.py` | Classroom library catalog, leveled recommendations, fuzzy title search |
+| `storytailor/insights.py` | Teacher check-in rules: each flag carries a plain reason code |
 | `storytailor/demo.py` | Synthetic demo classrooms (generator, and importer that only accepts files marked synthetic) |
 | `storytailor/readability.py` | Flesch-Kincaid grade mapped to an approximate Lexile-style band |
 | `storytailor/safety.py` | Word-boundary blocklist and wording softener (plus provider moderation) |
 | `storytailor/llm.py` | OpenAI provider and an offline deterministic provider for demos and zero-egress use |
 | `storytailor/routes/` | Flask blueprints: classroom, stories, privacy, public utilities |
-| `frontend/frontend/` | Student app (React + TypeScript + Tailwind) |
+| `frontend/frontend/` | Student and teacher views (React + TypeScript + Tailwind) |
 
 ## Quick start
 
@@ -162,7 +204,7 @@ cd frontend/frontend && npm install && npm run dev
 | POST | `/api/classrooms` | teacher | Create a classroom |
 | POST | `/api/classrooms/<id>/students` | teacher | Create pseudonymous accounts; access codes returned once |
 | GET | `/api/classrooms/<id>/students` | teacher | Roster by pseudonym, level, activity |
-| GET | `/api/classrooms/<id>/feedback-summary` | teacher | Difficulty fit, ratings, flags, level spread |
+| GET | `/api/classrooms/<id>/feedback-summary` | teacher | Difficulty fit, ratings, flags, level spread, who may need a check-in |
 | POST | `/api/stories` | student | Generate a personalized, grounded, leveled story |
 | GET | `/api/stories` | student | My recent stories |
 | POST | `/api/stories/<id>/feedback` | student | Rating, difficulty vote, or flag |
@@ -184,12 +226,17 @@ pytest -q
 ```
 
 The suite runs fully offline. It covers the level-fit retry, feedback-driven
-level changes, library recommendations and fuzzy search, PII redaction (including checking that nothing identifying
-reaches the model prompt), cross-teacher access isolation, export, delete,
-consent withdrawal, retention purge, and that the demo importer rejects files
-not marked synthetic and drops display names.
+level changes, the readability formula and its grade-to-level mapping, library
+recommendations and fuzzy search, PII redaction for each kind a child might type
+(and that nothing identifying reaches the model prompt, storage, or audit log),
+the teacher check-in rules, cross-teacher access isolation, export, delete,
+consent withdrawal, retention purge, that the demo importer rejects files not
+marked synthetic, and parity between the server and the static demo.
 
-## Design notes
+CI runs `ruff check`, `pytest`, ESLint, the TypeScript build, the demo build,
+and a check that the demo bundle references no external URLs.
+
+## Design decisions
 
 - **Why Flask and SQLite.** A school pilot needs something a single volunteer
   can deploy and a district IT reviewer can read end to end. One process, one
@@ -200,6 +247,18 @@ not marked synthetic and drops display names.
 - **Why measure after generating.** Asking a model for "grade 2 vocabulary"
   is not reliable on its own. Measuring the output and retrying once with a
   simplification instruction keeps stories near the target without a long loop.
+- **Explainable check-ins, not risk scores.** `insights.py` flags a student
+  only for a concrete reason a teacher can act on (a flagged story, a run of
+  "too hard" votes, a level well below the grade start, 14+ days without
+  reading, or "too easy" votes) and returns the reason with the flag. No
+  composite score, no ranking of children.
+- **Pseudonyms end to end.** The database never holds names; the teacher
+  keeps the pseudonym-to-name roster offline. The teacher view shows the
+  same pseudonyms, so the dashboard adds no new identifying data.
+- **A static demo that cannot drift silently.** The demo re-implements a few
+  server rules in TypeScript so it needs no backend. `tests/test_demo_parity.py`
+  reads that TypeScript and fails if the constants, blocklist, PII pattern
+  order, or sample story measurements stop matching the Python.
 - **Reading levels are approximate.** The Lexile-style number is mapped from
   Flesch-Kincaid grade and is meant for relative adjustment, not as an
   official Lexile measure.
@@ -207,7 +266,7 @@ not marked synthetic and drops display names.
 ## Roadmap
 
 - Read-aloud (TTS) and fluency practice with on-device speech recognition
-- Teacher web dashboard (currently JSON endpoints)
+- Teacher actions from the dashboard (review flagged stories, adjust a level)
 - Spanish and Korean story output for multilingual classrooms
 - Teacher-editable knowledge base with review workflow
 

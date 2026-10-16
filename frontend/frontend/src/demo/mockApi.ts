@@ -11,6 +11,8 @@
 import catalog from '../../../../storytailor/data/books.json';
 import knowledge from '../../../../storytailor/data/knowledge.json';
 import samples from './stories.json';
+import { DEMO_CLASS_NAME, demoRoster, demoSummary, type ReaderState } from './teacherData';
+import type { Difficulty } from '../types';
 
 interface CatalogBook {
   id: string;
@@ -38,8 +40,6 @@ interface DemoStory {
   sampleKey: string;
 }
 
-type Difficulty = 'too_easy' | 'just_right' | 'too_hard';
-
 // Values copied from storytailor/personalization.py and storytailor/books.py.
 const LEVEL_STEP = 50;
 const LEVEL_MIN = 100;
@@ -58,6 +58,7 @@ const profile = {
 
 const stories = new Map<number, DemoStory>();
 const votes: Difficulty[] = [];
+const allVotes: Difficulty[] = [];
 const alreadyRead = new Set<string>();
 let nextStoryId = 1;
 
@@ -195,6 +196,7 @@ function storyFeedback(storyId: number, body: { difficulty?: Difficulty; flag?: 
   if (!story) throw new DemoApiError('Story not found.');
   if (body.difficulty) {
     votes.unshift(body.difficulty);
+    allVotes.push(body.difficulty);
     votes.length = Math.min(votes.length, RECENT_VOTES);
   }
   if (body.flag === 'inappropriate' && !profile.avoidTopics.includes(story.sampleKey)) {
@@ -210,7 +212,32 @@ function logBook(body: { book_id?: string }) {
   return { ok: true };
 }
 
+function readerState(): ReaderState {
+  return {
+    targetLevel: profile.targetLevel,
+    interests: profile.interests,
+    recentVotes: [...votes],
+    allVotes: [...allVotes],
+    stories: stories.size,
+    booksRead: alreadyRead.size,
+  };
+}
+
+// The demo has one fictional classroom (id 1). Any non-empty teacher token works.
+function teacherRequest(path: string, token: string) {
+  if (!token.trim()) throw new DemoApiError('Missing or invalid teacher token.');
+  const m = path.match(/^\/api\/classrooms\/(\d+)\/(students|feedback-summary)$/);
+  if (!m) throw new DemoApiError('This action is not available in the demo.');
+  if (m[1] !== '1') throw new DemoApiError('Classroom not found.');
+  return m[2] === 'students' ? demoRoster(readerState()) : { classroom: DEMO_CLASS_NAME, ...demoSummary(readerState()) };
+}
+
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+export async function demoTeacherApi(path: string, token: string): Promise<unknown> {
+  await delay(250);
+  return teacherRequest(path, token);
+}
 
 export async function demoApi(path: string, code: string, body?: unknown): Promise<unknown> {
   if (code.length !== 8) throw new DemoApiError('Missing or unknown access code.');

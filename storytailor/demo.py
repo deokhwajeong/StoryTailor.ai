@@ -51,7 +51,8 @@ def _student(db, classroom_id: int, grade: int, level: int, interests: list[str]
 
 def _log(db, sid: str, book_id: str, minutes: int, completed: bool, rating: int | None, day: str) -> None:
     db.execute(
-        "INSERT INTO reading_log (student_id, book_id, minutes, completed, rating, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+        "INSERT INTO reading_log (student_id, book_id, minutes, completed, rating, created_at) "
+        "VALUES (?, ?, ?, ?, ?, ?)",
         (sid, book_id, minutes, int(completed), rating, f"{day}T15:00:00+00:00"),
     )
 

@@ -6,6 +6,10 @@ export const IS_DEMO = import.meta.env.MODE === 'demo' || import.meta.env.VITE_D
 // Fictional access code for the demo reader. Any 8 characters work.
 export const DEMO_ACCESS_CODE = 'DEMO2026';
 
+// Fictional teacher token and the demo's single classroom. Any token works.
+export const DEMO_TEACHER_TOKEN = 'demo-teacher';
+export const DEMO_CLASSROOM_ID = '1';
+
 export const DEMO_TOPIC_IDEAS = [
   'an octopus who loves puzzles',
   'a trip to the Moon',

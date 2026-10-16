@@ -1,11 +1,13 @@
 """Teacher endpoints: classrooms, pseudonymous student accounts, feedback summary."""
 
 import json
+from datetime import datetime, timezone
 
 from flask import Blueprint, abort, g, jsonify, request
 
 from ..auth import teacher_owns_classroom, teacher_required
 from ..db import get_db, loads, utcnow
+from ..insights import RECENT_VOTES, needs_attention
 from ..personalization import default_level
 from ..privacy import audit, hash_access_code, new_access_code, new_pseudonym
 
@@ -72,7 +74,8 @@ def list_students(classroom_id):
 @bp.get("/<int:classroom_id>/feedback-summary")
 @teacher_required
 def feedback_summary(classroom_id):
-    """What the class is telling us: difficulty fit, ratings, and flagged stories."""
+    """What the class is telling us: difficulty fit, ratings, flagged stories, and who
+    may need a check-in (see insights.py for the rules)."""
     teacher_owns_classroom(classroom_id)
     db = get_db()
     base = "FROM feedback f JOIN students s ON s.id = f.student_id WHERE s.classroom_id = ?"
@@ -93,7 +96,17 @@ def feedback_summary(classroom_id):
         "COUNT(DISTINCT r.student_id) AS readers FROM reading_log r JOIN students s ON s.id = r.student_id "
         "WHERE s.classroom_id = ?", (classroom_id,)
     ).fetchone()
+    students = []
+    for row in db.execute("SELECT id, grade, target_level, last_active_at FROM students WHERE classroom_id = ?",
+                          (classroom_id,)):
+        votes = [r["difficulty"] for r in db.execute(
+            "SELECT difficulty FROM feedback WHERE student_id = ? AND difficulty IS NOT NULL "
+            "ORDER BY id DESC LIMIT ?", (row["id"], RECENT_VOTES))]
+        flag_count = db.execute("SELECT COUNT(*) FROM feedback WHERE student_id = ? AND flag IS NOT NULL",
+                                (row["id"],)).fetchone()[0]
+        students.append(dict(row) | {"recent_votes": votes, "flags": flag_count})
     return jsonify({
+        "needs_attention": needs_attention(students, datetime.now(timezone.utc)),
         "reading": {"sessions": reading["sessions"], "minutes": reading["minutes"] or 0,
                     "readers": reading["readers"],
                     "average_rating": round(reading["avg_rating"], 2) if reading["avg_rating"] else None},
