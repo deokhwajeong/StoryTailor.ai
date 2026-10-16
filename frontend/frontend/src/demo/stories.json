@@ -1,0 +1,199 @@
+[
+  {
+    "key": "octopus",
+    "keywords": [
+      "octopus",
+      "ocean",
+      "sea",
+      "puzzle",
+      "puzzles",
+      "tide",
+      "fish",
+      "crab",
+      "beach",
+      "water",
+      "shell",
+      "underwater",
+      "whale",
+      "shark"
+    ],
+    "sources": [
+      "animals-octopus",
+      "ocean-tides",
+      "sel-growth"
+    ],
+    "versions": {
+      "low": {
+        "text": "Pip was a small octopus who lived in a rocky tide pool by the sea, and she loved puzzles more than anything else in the ocean.\n\nOne morning the tide brought in a glass jar with a shiny shell inside. Pip pushed on the lid, but it would not move. She pulled as hard as she could, and still nothing happened.\n\n\"Maybe I am not good at this,\" Pip said with a sigh.\n\nMax the crab walked over to her. \"You have eight arms,\" he said. \"Why not try using more of them?\"\n\nPip thought about it for a while. She wrapped two arms around the jar to hold it still, and then she used two more arms to turn the lid, slowly and carefully. Pop! The lid came off.\n\nPip lifted out the shell, and her skin turned a bright, happy orange. \"I made a lot of mistakes,\" she told Max, \"but each one helped me learn a new way to try.\"",
+        "measured_level": 526
+      },
+      "mid": {
+        "text": "Pip was a small octopus who lived in a rocky tide pool at the edge of the ocean. Twice a day the tide rolled in and out, and it always left something new behind for Pip to find. She loved puzzles more than anything.\n\nOne morning the water carried in a glass jar with a shiny shell inside. Pip pushed on the lid, but it would not budge. She pulled with all her strength, and still nothing happened.\n\n\"Maybe I am just not good at puzzles,\" she sighed.\n\nMax the crab scuttled over. \"You have eight arms,\" he said. \"Why not try using more of them at the same time?\"\n\nPip thought about it. She wrapped two arms around the jar to hold it steady, and then she used two more to twist the lid, slowly and carefully. With a soft pop, it came free.\n\nPip lifted out the shell, and her skin changed to a proud, bright orange. \"Every mistake taught me something,\" she told Max. \"Next time, I will try a new way sooner.\"",
+        "measured_level": 583
+      },
+      "high": {
+        "text": "Pip was a curious young octopus. Her home was a rocky tide pool at the edge of the ocean. Twice each day the tide went out, showing crabs, snails, and sea stars. Then it came back carrying surprising things from deeper water. Pip thought of each one as a puzzle.\n\nOne morning the waves brought a glass jar holding a glittering shell. Pip pressed on the lid, then tugged it, then pressed again. Nothing changed. She started to feel discouraged.\n\n\"Maybe puzzles are only for clever animals,\" she said quietly.\n\nMax, an old crab, heard her. \"Clever animals make mistakes all the time,\" he said. \"The difference is that they keep trying new ideas.\"\n\nPip looked at the jar more carefully. This time she held the jar with two arms and gripped the lid with two more, turning it slowly. At last the lid came loose with a pop.\n\nAs she held the shell, Pip's skin rippled into bright orange. She saw that every try that failed had taught her something useful about the jar.",
+        "measured_level": 683
+      }
+    }
+  },
+  {
+    "key": "moon",
+    "keywords": [
+      "moon",
+      "space",
+      "star",
+      "stars",
+      "planet",
+      "planets",
+      "rocket",
+      "astronaut",
+      "sky",
+      "night",
+      "mars",
+      "jupiter",
+      "sun",
+      "alien",
+      "galaxy"
+    ],
+    "sources": [
+      "space-moon",
+      "space-planets",
+      "sel-courage"
+    ],
+    "versions": {
+      "low": {
+        "text": "Leo kept a red toy rocket by his window, and every night he pointed it at the Moon. \"Is the Moon a big lamp?\" he asked his grandma one night when the sky was clear.\n\n\"No,\" said Grandma, smiling. \"The Moon does not make its own light. It shines with light from the Sun, just like a mirror does when you hold it up.\"\n\nThey took a blanket out to the backyard to look up. The sky was big and dark, and Leo felt a little scared, so he wanted to go back inside.\n\n\"Being brave does not mean you never feel scared,\" Grandma said. \"It means you keep going, even when you do.\"\n\nLeo held her hand and kept looking, and soon he saw a tiny red dot in the sky. \"That is Mars,\" said Grandma. \"It looks red because its ground is covered in dusty rust.\"\n\n\"There are eight planets,\" Leo said, thinking of his book. \"One day I will visit one.\" He held his rocket up to the stars and made a soft zooming sound.",
+        "measured_level": 538
+      },
+      "mid": {
+        "text": "Leo kept a red toy rocket by his window, and every night he pointed it at the Moon. \"Why does the Moon glow like a light?\" he asked his grandma one evening.\n\n\"It does not make its own light,\" Grandma said. \"It reflects light from the Sun, the way a mirror does.\"\n\nThey carried a blanket into the backyard. The sky was huge and dark, and Leo felt a shiver of fear. He wanted to go back inside.\n\n\"Being brave does not mean you never feel afraid,\" Grandma said gently. \"It means you keep going, even when you do.\"\n\nLeo squeezed her hand and kept looking. Soon he spotted a tiny reddish dot. \"That is Mars,\" said Grandma. \"It looks red because its ground is covered in rusty dust.\"\n\n\"There are eight planets,\" Leo whispered, thinking of his book. \"Someday I will visit one.\" He lifted his rocket toward the stars and made a soft whooshing sound.",
+        "measured_level": 593
+      },
+      "high": {
+        "text": "Leo kept a worn red rocket on his windowsill. Each night he aimed it at the Moon. \"If the Moon glows so brightly, does it have lights inside?\" he wondered one evening.\n\n\"The Moon makes no light of its own,\" Grandma explained. \"It reflects sunlight. It works like a giant mirror in the sky.\"\n\nThey spread a blanket across the backyard grass. Without the porch light, the sky seemed endless. Leo felt a sudden flutter of worry. He thought about going back inside.\n\n\"Courage doesn't mean you never feel afraid,\" Grandma said quietly. \"It means you keep going, even while you feel that way.\"\n\nLeo breathed slowly and kept watching. Bit by bit he noticed a faint reddish speck. \"That's Mars,\" Grandma said. \"Its ground is covered in rusty dust. That gives it the color.\"\n\n\"Our solar system has eight planets. Jupiter is the largest,\" Leo said proudly. He raised his rocket toward the glittering sky and pictured the journey ahead.",
+        "measured_level": 652
+      }
+    }
+  },
+  {
+    "key": "owl",
+    "keywords": [
+      "owl",
+      "forest",
+      "tree",
+      "trees",
+      "bird",
+      "birds",
+      "squirrel",
+      "rabbit",
+      "bunny",
+      "woods",
+      "animal",
+      "animals",
+      "fox",
+      "deer",
+      "bear"
+    ],
+    "sources": [
+      "animals-owls",
+      "nature-forest",
+      "sel-friendship"
+    ],
+    "versions": {
+      "low": {
+        "text": "Olive was a young owl who lived high up in an old oak tree. Like most owls, her family hunted at night. But Olive liked to stay awake to watch the forest wake up in the morning.\n\nOne day she saw a squirrel named Nut sitting all alone on a branch. \"Everyone is busy,\" he said. \"Nobody has time to play with me.\"\n\nOlive could not move her eyes, so she turned her whole head to look at him. Nut giggled. \"How did you do that?\"\n\n\"Owls turn their heads to look around,\" Olive said. \"Do you want to play hide and seek?\"\n\nHer soft feathers let her fly with almost no sound, so she was very good at the game, and Nut was good at hiding in holes in the trees.\n\nLater, a shy rabbit hopped close and watched them. Olive thought about how sad Nut had felt. \"Would you like to play with us?\" she called. The rabbit's ears went up. Soon three friends were laughing together in the forest.",
+        "measured_level": 538
+      },
+      "mid": {
+        "text": "Olive was a young owl who lived high in an old oak tree. Like most owls, her family hunted at night, but Olive often stayed up to watch the forest wake up in the morning.\n\nOne day she saw a squirrel named Nut sitting alone on a branch. \"Everyone is busy,\" he said. \"Nobody has time to play with me.\"\n\nOlive could not move her eyes, so she turned her whole head to look at him. Nut giggled. \"How did you do that?\"\n\n\"Owls turn their heads to look around,\" Olive said. \"Want to play hide and seek?\"\n\nHer soft feathers let her fly almost silently, so she was very good at the game. Nut was good at hiding in hollow trees.\n\nLater, a shy rabbit hopped close and watched them. Olive remembered how lonely Nut had felt. \"Would you like to join us?\" she called. The rabbit's ears perked up, and soon three friends were laughing together in the forest.",
+        "measured_level": 607
+      },
+      "high": {
+        "text": "Olive was a young barn owl. She lived in the hollow of an ancient oak. Her family hunted through the night, as most owls do. Olive, though, often stayed awake to watch the forest wake up.\n\nOne afternoon she found a squirrel named Nut sitting all alone on a branch. \"Everyone seems too busy for me,\" he complained. \"Nobody includes me.\"\n\nOwls cannot move their eyes, so Olive turned her whole head to study him. Nut burst out laughing. \"That's an amazing trick!\"\n\n\"It's how owls look around,\" Olive said. \"Would you like to play hide and seek?\"\n\nHer soft feathers let her glide almost silently. That made her a great seeker. But Nut was a champion at hiding in hollow logs.\n\nBefore long a timid rabbit crept closer. It peeked from behind a fern. Olive remembered how lonely Nut had felt. \"Please join us,\" she called warmly. Good friends include others, she thought. Then the three new friends played beneath the towering trees.",
+        "measured_level": 670
+      }
+    }
+  },
+  {
+    "key": "garden",
+    "keywords": [
+      "garden",
+      "seed",
+      "seeds",
+      "plant",
+      "plants",
+      "flower",
+      "flowers",
+      "grow",
+      "rain",
+      "rainbow",
+      "sunflower",
+      "farm",
+      "vegetable",
+      "weather",
+      "spring"
+    ],
+    "sources": [
+      "plants-seeds",
+      "weather-rainbow",
+      "sel-growth"
+    ],
+    "versions": {
+      "low": {
+        "text": "Ms. Rivera gave each student a striped sunflower seed. \"Seeds need water, air, and the right warmth to sprout,\" she said. \"Your job is to give your seed what it needs.\"\n\nMia planted her seed in a paper cup and set it on the sunny window ledge. She gave it water every day and checked it every morning.\n\nAfter a week, the dirt looked just the same, but her friend's seed already had two tiny leaves. \"I must have done something wrong,\" Mia said, and her cheeks felt hot.\n\n\"Mistakes help us learn,\" Ms. Rivera said. \"Let's look closely at what your seed might need.\"\n\nTogether they saw that the dirt was too wet. Mia let it dry a little, and then she gave it less water. Four days later, a small green sprout pushed up out of the dirt.\n\nThat day a quick rain came and went, and the sun shone through the drops. A rainbow stretched over the playground. Mia smiled. Some things just take a little time.",
+        "measured_level": 545
+      },
+      "mid": {
+        "text": "Ms. Rivera handed each student a striped sunflower seed. \"Seeds need water, air, and the right warmth to sprout,\" she said. \"Your job is to give your seed what it needs.\"\n\nMia planted hers in a paper cup and set it by the sunny window. She watered it carefully and checked it every morning.\n\nAfter a week, the dirt looked exactly the same. Her friend's seed already had two tiny leaves. \"I must have done something wrong,\" Mia said, feeling her cheeks get hot.\n\n\"Mistakes help us learn,\" Ms. Rivera said. \"Let's look closely. What might your seed need?\"\n\nTogether they noticed the soil was too wet. Mia let it dry a little and watered it less. Four days later, a pale green sprout pushed up through the dirt.\n\nThat afternoon a quick rain shower passed, and sunlight shone through the drops. A rainbow stretched across the playground. Mia grinned. Some things just take a little time.",
+        "measured_level": 592
+      },
+      "high": {
+        "text": "Ms. Rivera gave one striped sunflower seed to every student. \"Seeds need water, air, and the right warmth to sprout,\" she explained. \"After that, plants use sunlight, water, and air to make their own food.\"\n\nMia planted her seed in a paper cup. She put it on the sunniest windowsill and watered it a lot every morning.\n\nAfter a week, though, her soil was still bare. Her friend's seedling had already opened two soft leaves. Mia felt silly. She wondered if she was simply bad at gardening.\n\n\"Mistakes are how our brains learn,\" Ms. Rivera said. \"Let's find out. What could be different about your cup?\"\n\nThe soil was soggy. Mia had been watering too eagerly. She let it dry and changed her plan. A few days later, a pale sprout appeared.\n\nThat afternoon a brief shower drifted past. Sunlight shone through the raindrops. The light bent into a bright rainbow. Mia grinned. Waiting and careful noticing had worked together.",
+        "measured_level": 668
+      }
+    }
+  },
+  {
+    "key": "dragon",
+    "keywords": [
+      "dragon",
+      "dragons",
+      "castle",
+      "magic",
+      "princess",
+      "prince",
+      "knight",
+      "unicorn",
+      "wizard",
+      "fairy",
+      "fantasy",
+      "kingdom",
+      "monster",
+      "friend",
+      "friendship",
+      "library",
+      "book",
+      "books"
+    ],
+    "sources": [
+      "sel-friendship",
+      "community-library",
+      "craft-story-structure"
+    ],
+    "versions": {
+      "low": {
+        "text": "Ember was a small green dragon with gold spots, and she loved books more than anything. She had one problem, though. When she got excited, she sneezed, and her sneezes came out as little sparks.\n\nOne Saturday, Ember went to the town library. \"Can dragons come in here?\" she asked in a small voice.\n\nMr. Park, the librarian, smiled. \"A library lends books for free to everyone in town,\" he said. \"That means dragons too.\"\n\nHe helped her find a book about whales. The story was so good that Ember felt a sneeze tickle her nose. She froze, because there was paper all around her.\n\nA boy named Sam saw her worried face. He ran to get her a cup of cool water from the fountain. Ember drank it, and the tickle went away.\n\n\"Thank you,\" she said. \"Do you want to read this with me?\" Sam pulled up a chair, and they took turns reading the pages out loud. Ember thought the library was even better with a friend.",
+        "measured_level": 542
+      },
+      "mid": {
+        "text": "Ember was a small green dragon with gold spots and a huge love of books. She had one problem, though. When she got excited, she sneezed, and her sneezes came out as little sparks.\n\nOne Saturday, Ember worked up her courage and went to the town library. \"Am I allowed in here?\" she asked in a small voice.\n\nMr. Park, the librarian, smiled. \"A library lends books for free to everyone in town. That includes dragons.\"\n\nHe helped her find a book about whales. The story was so good that Ember felt a sneeze tickling her nose. She froze, worried about all the paper around her.\n\nA boy named Sam noticed her worried face. He quickly got her a cup of cool water from the fountain. Ember sipped it, and the tickle faded away.\n\n\"Thank you,\" she said. \"Would you like to read this with me?\" Sam pulled up a chair, and they took turns reading pages aloud. Ember decided the library was even better with a friend.",
+        "measured_level": 591
+      },
+      "high": {
+        "text": "Ember was a young green dragon with gold speckles and a giant hunger for stories. Sadly, whenever she got excited, she sneezed. Her sneezes made small, crackling sparks.\n\nOne Saturday, Ember gathered her courage and walked to the town library. She had admired it for months. \"Are dragons allowed inside?\" she asked, her voice shaking.\n\nMr. Park, the librarian, welcomed her warmly. \"Public libraries lend books to everyone in town for free. That includes dragons.\"\n\nHe led her to an exciting story about whales. Halfway through chapter two, Ember felt a tickle in her nose. She stiffened. She pictured the shelves of paper all around her.\n\nA boy named Sam noticed her worried face. Right away, he hurried to the drinking fountain. He came back with a paper cup of cool water. Ember gulped it down. The tickle faded away.\n\n\"Thank you for helping me,\" Ember said. \"Would you like to share this book?\" Sam pulled up a chair. They took turns reading pages aloud until closing time.",
+        "measured_level": 691
+      }
+    }
+  }
+]

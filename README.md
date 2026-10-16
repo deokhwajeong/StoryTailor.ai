@@ -11,6 +11,22 @@ Python · Flask · OpenAI API · SQLite · React + Vite
 
 <p align="center"><sub>Student view with synthetic demo data and the offline story generator.</sub></p>
 
+## Live demo
+
+**[Try it in your browser](https://deokhwajeong.github.io/demos/storytailor/)**: the real
+student UI with no server and no API key. In the demo build, API calls are answered by an
+in-browser mock (`frontend/frontend/src/demo/`) that mirrors the server logic: PII
+redaction and the topic safety check, picking the story draft closest to the reader's
+target level, the feedback rule that moves the target by 50L, and leveled recommendations
+from the real classroom catalog. Stories are pre-written samples, three leveled drafts per
+topic, measured with the same readability formula the server uses. The reader is a
+fictional grade 3 student, and nothing is sent or stored; reloading resets the demo.
+
+```bash
+cd frontend/frontend && npm install && npm run build:demo   # static site in dist-demo/
+npm run dev:demo                                            # same mock, with hot reload
+```
+
 ## Background
 
 StoryTailor grew out of a 2026 pilot with one elementary classroom in the

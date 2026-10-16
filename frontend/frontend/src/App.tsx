@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { SparklesIcon, BookOpenIcon, InformationCircleIcon } from '@heroicons/react/24/solid';
+import { DEMO_ACCESS_CODE, DEMO_TOPIC_IDEAS, IS_DEMO } from './demo/constants';
 
 const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:5000';
 
@@ -35,6 +36,11 @@ const DIFFICULTY_LABELS: Record<Difficulty, string> = {
 };
 
 async function api<T>(path: string, code: string, body?: unknown): Promise<T> {
+  if (IS_DEMO) {
+    // Loaded only in demo builds; the normal build drops this branch.
+    const { demoApi } = await import('./demo/mockApi');
+    return (await demoApi(path, code, body)) as T;
+  }
   const res = await fetch(`${API_BASE}${path}`, {
     method: body === undefined ? 'GET' : 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Student-Code': code },
@@ -47,13 +53,14 @@ async function api<T>(path: string, code: string, body?: unknown): Promise<T> {
 
 function App() {
   // The access code lives only in memory: closing the tab signs the student out.
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState(IS_DEMO ? DEMO_ACCESS_CODE : '');
   const [topic, setTopic] = useState('');
   const [goal, setGoal] = useState('');
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [feedbackSent, setFeedbackSent] = useState(false);
+  const [levelChange, setLevelChange] = useState<{ from: number; to: number } | null>(null);
   const [showSources, setShowSources] = useState(false);
   const [books, setBooks] = useState<Book[] | null>(null);
   const [loggedBook, setLoggedBook] = useState('');
@@ -83,6 +90,7 @@ function App() {
     setError('');
     setStory(null);
     setFeedbackSent(false);
+    setLevelChange(null);
     try {
       setStory(await api<Story>('/api/stories', code, { topic, learning_goal: goal }));
     } catch (e) {
@@ -95,7 +103,10 @@ function App() {
   const sendFeedback = async (difficulty: Difficulty) => {
     if (!story) return;
     try {
-      await api(`/api/stories/${story.id}/feedback`, code, { difficulty });
+      const res = await api<{ target_level?: number }>(`/api/stories/${story.id}/feedback`, code, { difficulty });
+      if (typeof res.target_level === 'number') {
+        setLevelChange({ from: story.target_level, to: res.target_level });
+      }
       setFeedbackSent(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not send feedback.');
@@ -104,6 +115,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-blue-100 to-green-100 flex flex-col items-center justify-center p-4">
+      {IS_DEMO && (
+        <p
+          role="note"
+          className="mb-4 max-w-md text-center text-xs text-gray-600 bg-white/70 border border-gray-200 rounded-full px-4 py-1.5"
+        >
+          Demo mode: sample stories, no data leaves your browser
+        </p>
+      )}
       <main className="w-full max-w-md bg-white/80 rounded-3xl shadow-xl p-8 flex flex-col items-center">
         <h1 className="text-3xl font-bold text-pink-400 mb-2 flex items-center gap-2">
           <SparklesIcon className="w-8 h-8 text-yellow-300" aria-hidden="true" />
@@ -131,6 +150,21 @@ function App() {
             onChange={e => setTopic(e.target.value)}
             disabled={loading}
           />
+          {IS_DEMO && (
+            <div className="flex flex-wrap gap-1.5" aria-label="Story ideas">
+              {DEMO_TOPIC_IDEAS.map(idea => (
+                <button
+                  key={idea}
+                  type="button"
+                  className="text-xs rounded-full bg-pink-50 border border-pink-200 px-2.5 py-1 text-pink-600 hover:bg-pink-100 disabled:opacity-50"
+                  onClick={() => setTopic(idea)}
+                  disabled={loading}
+                >
+                  {idea}
+                </button>
+              ))}
+            </div>
+          )}
           <label className="text-sm text-gray-600" htmlFor="goal">What do you want to learn? (optional)</label>
           <input
             id="goal"
@@ -196,7 +230,23 @@ function App() {
             <div className="mt-4 w-full">
               <p className="text-sm text-gray-600 mb-2">How was this story?</p>
               {feedbackSent ? (
-                <p className="text-green-600">Thanks! Your next story will fit you even better.</p>
+                <div className="flex flex-col gap-2">
+                  <p className="text-green-600">
+                    Thanks! {levelChange && levelChange.to < levelChange.from && 'Your next story will be a little easier.'}
+                    {levelChange && levelChange.to > levelChange.from && 'Your next story will be a little more challenging.'}
+                    {(!levelChange || levelChange.to === levelChange.from) && 'Your next story will fit you even better.'}
+                  </p>
+                  {levelChange && levelChange.to !== levelChange.from && (
+                    <p className="text-xs text-gray-500">Reading level: {levelChange.from}L to {levelChange.to}L</p>
+                  )}
+                  <button
+                    className="self-start text-sm rounded-full bg-pink-300 hover:bg-blue-300 text-white font-bold px-4 py-1.5 shadow disabled:opacity-50"
+                    onClick={generate}
+                    disabled={loading || !topic.trim() || code.length < 8}
+                  >
+                    {loading ? 'Writing your story...' : 'Make my next story'}
+                  </button>
+                </div>
               ) : (
                 <div className="flex gap-2">
                   {(Object.keys(DIFFICULTY_LABELS) as Difficulty[]).map(d => (

@@ -50,6 +50,7 @@ chroma_data/
 Thumbs.db
 node_modules
 dist
+dist-demo
 
 # Local data
 instance/
